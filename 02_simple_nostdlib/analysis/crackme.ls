@@ -1,0 +1,5 @@
+-rwxr-xr-x 1 benni benni 8392 28. Nov 22:02 crackme
+-rw-r--r-- 1 benni benni  962 28. Nov 21:58 crackme.c
+-rw-r--r-- 1 benni benni 1160 28. Nov 22:02 crackme.o
+-rw-r--r-- 1 benni benni 1248 28. Nov 22:02 crackme.obj
+-rw-r--r-- 1 benni benni 5762 28. Nov 22:02 crackme.s
