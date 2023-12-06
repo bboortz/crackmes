@@ -87,7 +87,7 @@ $(OUTPUT): $(SOURCE)
 # 1089  gcc -c crackme.s -o program.o
 	$(CC) $(CFLAGS_TO_ASM) -o $@.s $<
 	$(CC) $(CFLAGS_TO_OBJ) -o $@.o $<
-	$(CC) $(CFLAGS_TO_EXE) -nostdlib -o $@ $<
+	$(CC) $(CFLAGS_TO_EXE) -o $@ $<
 
 # OLD way
 #	$(CC) $(CFLAGS_OBJ) -o $@.o $<
