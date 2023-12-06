@@ -1,6 +1,6 @@
 # build
 ```
-NOSTD=0 make clean all
+STATIC=0 OPTIMIZATION=SIZE NOSTD=0 make clean all
 ```
 
 # task

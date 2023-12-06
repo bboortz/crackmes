@@ -89,8 +89,8 @@ $(OUTPUT): $(SOURCE)
 # 1088  gcc -S -o crackme.s crackme.c
 # 1089  gcc -c crackme.s -o program.o
 	$(CC) $(CFLAGS_TO_ASM) -o $@.s $<
-	$(CC) $(CFLAGS_TO_OBJ) -o $@.o $<
-	$(CC) $(CFLAGS_TO_EXE) -o $@ $<
+	$(CC) $(CFLAGS_TO_OBJ) -o $@.o $@.s
+	$(CC) $(CFLAGS_TO_EXE) -o $@ $@.o
 	exit
 
 # OLD way

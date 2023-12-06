@@ -1,4 +1,4 @@
--rwxr-xr-x 1 benni benni 13532  6. Dez 19:45 crackme
--rw-r--r-- 1 benni benni  1939  6. Dez 19:43 crackme.c
--rw-r--r-- 1 benni benni  2860  6. Dez 19:45 crackme.o
--rw-r--r-- 1 benni benni  4772  6. Dez 19:45 crackme.s
+-rwxr-xr-x 1 benni benni 14964  6. Dez 20:39 crackme
+-rw-r--r-- 1 benni benni  1558  6. Dez 20:39 crackme.c
+-rw-r--r-- 1 benni benni  2956  6. Dez 20:39 crackme.o
+-rw-r--r-- 1 benni benni  6401  6. Dez 20:39 crackme.s

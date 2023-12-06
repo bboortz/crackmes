@@ -4,10 +4,9 @@ _IO_stdin_used
 __libc_start_main
 strncmp
 puts
-printf
 fgets
-strncpy
 __cxa_finalize
+snprintf
 stdin
 __stack_chk_fail
 libc.so.6
@@ -21,16 +20,53 @@ _ITM_registerTMCloneTable
 Y[^]
 supe
 rS3c
-rc3t
+r3t!
 [^_]
 Access granted!
 Access denied!
-1111
  *** enjoy the crackme ***
 Enter the password: 
-;*2$"
+;*2$"0
+GCC: (GNU) 13.2.1 20230801
+crackme.c
+_DYNAMIC
+__GNU_EH_FRAME_HDR
+_GLOBAL_OFFSET_TABLE_
+__libc_start_main@GLIBC_2.34
+_ITM_deregisterTMCloneTable
+__x86.get_pc_thunk.bx
+fgets@GLIBC_2.0
+_edata
+not_ok
+_fini
+__stack_chk_fail@GLIBC_2.4
+substr
+__x86.get_pc_thunk.dx
+__cxa_finalize@GLIBC_2.1.3
+__data_start
+puts@GLIBC_2.0
+__gmon_start__
+__dso_handle
+_IO_stdin_used
+stdin@GLIBC_2.0
+snprintf@GLIBC_2.0
+_end
+_fp_hw
+__bss_start
+main
+__x86.get_pc_thunk.ax
+__stack_chk_fail_local
+check_password
+__TMC_END__
+_ITM_registerTMCloneTable
+strncmp@GLIBC_2.0
+_init
+.symtab
+.strtab
 .shstrtab
 .interp
+.note.gnu.build-id
+.note.gnu.property
 .note.ABI-tag
 .gnu.hash
 .dynsym
@@ -52,3 +88,4 @@ Enter the password:
 .got.plt
 .data
 .bss
+.comment

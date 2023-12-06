@@ -1,3 +1,3 @@
-	linux-gate.so.1 (0xf7fbd000)
-	libc.so.6 => /usr/lib32/libc.so.6 (0xf7d4b000)
-	/lib/ld-linux.so.2 => /usr/lib/ld-linux.so.2 (0xf7fbf000)
+	linux-gate.so.1 (0xf7fb7000)
+	libc.so.6 => /usr/lib32/libc.so.6 (0xf7d45000)
+	/lib/ld-linux.so.2 => /usr/lib/ld-linux.so.2 (0xf7fb9000)
