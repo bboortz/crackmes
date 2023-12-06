@@ -1,0 +1,71 @@
+
+crackme:     file format elf32-i386
+crackme
+architecture: i386, flags 0x00000102:
+EXEC_P, D_PAGED
+start address 0x08049770
+
+Program Header:
+    LOAD off    0x00000000 vaddr 0x08048000 paddr 0x08048000 align 2**12
+         filesz 0x0000023c memsz 0x0000023c flags r--
+    LOAD off    0x00001000 vaddr 0x08049000 paddr 0x08049000 align 2**12
+         filesz 0x00087034 memsz 0x00087034 flags r-x
+    LOAD off    0x00089000 vaddr 0x080d1000 paddr 0x080d1000 align 2**12
+         filesz 0x00032b0c memsz 0x00032b0c flags r--
+    LOAD off    0x000bca68 vaddr 0x08104a68 paddr 0x08104a68 align 2**12
+         filesz 0x00003460 memsz 0x000062c0 flags rw-
+    NOTE off    0x000001ac vaddr 0x00000000 paddr 0x00000000 align 2**2
+         filesz 0x00000020 memsz 0x00000020 flags r--
+     TLS off    0x000bca68 vaddr 0x08104a68 paddr 0x08104a68 align 2**2
+         filesz 0x0000000c memsz 0x0000002c flags r--
+0x6474e553 off    0x00000000 vaddr 0x08048178 paddr 0x00000000 align 2**2
+         filesz 0x00000000 memsz 0x00000000 flags r--
+   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**2
+         filesz 0x00000000 memsz 0x00000000 flags rw-
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .note.ABI-tag 00000020  080481ac  080481ac  000001ac  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .rel.plt      00000070  080481cc  080481cc  000001cc  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .init         00000024  08049000  08049000  00001000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .plt          00000008  08049028  08049028  00001028  2**3
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .text         00086fec  08049030  08049030  00001030  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  5 .fini         00000018  080d001c  080d001c  0008801c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  6 .rodata       0001c824  080d1000  080d1000  00089000  2**5
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .stapsdt.base 00000001  080ed824  080ed824  000a5824  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .eh_frame     000161ec  080ed828  080ed828  000a5828  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  9 .gcc_except_table 000000f8  08103a14  08103a14  000bba14  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+ 10 .tdata        0000000c  08104a68  08104a68  000bca68  2**2
+                  CONTENTS, ALLOC, LOAD, DATA, THREAD_LOCAL
+ 11 .tbss         00000020  08104a74  08104a74  000bca74  2**2
+                  ALLOC, THREAD_LOCAL
+ 12 .init_array   00000004  08104a74  08104a74  000bca74  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 13 .fini_array   00000008  08104a78  08104a78  000bca78  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 14 .data.rel.ro  00002514  08104a80  08104a80  000bca80  2**5
+                  CONTENTS, ALLOC, LOAD, DATA
+ 15 .got          0000004c  08106f94  08106f94  000bef94  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 16 .got.plt      00000010  08106ff4  08106ff4  000beff4  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 17 .data         00000ea8  08107020  08107020  000bf020  2**5
+                  CONTENTS, ALLOC, LOAD, DATA
+ 18 .bss          00002e48  08107ee0  08107ee0  000bfec8  2**5
+                  ALLOC
+ 19 .note.stapsdt 000012ac  00000000  00000000  000bfec8  2**2
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+no symbols
+
+
