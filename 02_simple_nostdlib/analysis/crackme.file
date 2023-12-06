@@ -3,3 +3,4 @@ crackme.c:   ASCII text
 crackme.o:   ELF 32-bit LSB relocatable, Intel 80386, version 1 (SYSV), not stripped
 crackme.obj: ELF 32-bit LSB relocatable, Intel 80386, version 1 (SYSV), not stripped
 crackme.s:   C source, ASCII text, with CRLF line terminators
+crackme.s1:  C source, ASCII text, with CRLF line terminators

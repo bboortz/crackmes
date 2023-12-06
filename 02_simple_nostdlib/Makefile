@@ -10,7 +10,7 @@ CFLAGS_STD = -std=c99 -nostdlib -m32
 # -O2
 CFLAGS_OPTIMIZATIONS = -O0 -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-stack-protector -fno-asynchronous-unwind-tables
 # -g0
-CFLAGS_STRIP = -s 
+CFLAGS_STRIP = -s -g0
 CFLAGS_OBJ = $(CFLAGS_ERROR) $(CFLAGS_STD) $(CFLAGS_OPTIMIZATIONS) $(CFLAGS_STRIP) -static -c
 CFLAGS_EXE = $(CFLAGS_ERROR) $(CFLAGS_STD) $(CFLAGS_OPTIMIZATIONS) $(CFLAGS_STRIP) -static
 OBJCONVFLAGS = -fnasm -wex -xs
@@ -45,5 +45,7 @@ analysis:
 	strings $(OUTPUT) > analysis/$(OUTPUT).strings
 	ldd $(OUTPUT) > analysis/$(OUTPUT).ldd 2>&1 || true
 	nm $(OUTPUT) > analysis/$(OUTPUT).nm 2>&1 || true
-	objdump -x -t $(OUTPUT) > analysis/$(OUTPUT).objdump
+	objdump -x -t $(OUTPUT) > analysis/$(OUTPUT).objdump-headers || true
+	objdump -S $(OUTPUT) > analysis/$(OUTPUT).objdump-sources || true
+	readelf -a $(OUTPUT) > analysis/$(OUTPUT).readelf || true
 

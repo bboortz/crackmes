@@ -1,5 +1,5 @@
 ; Disassembly of file: crackme.o
-; Tue Nov 28 22:02:34 2023
+; Wed Dec  6 14:02:20 2023
 ; Type: ELF32
 ; Syntax: NASM
 ; Instruction set: Pentium
