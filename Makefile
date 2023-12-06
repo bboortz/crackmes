@@ -100,7 +100,7 @@ $(OUTPUT): $(SOURCE)
 #	$(ASM) $(ASMFLAGS) -o $@.obj $@.s
 #	$(CC) $(CFLAGS_EXE) -o $@ $@.obj
 
-ifeq ($(strip $(OPTIMIZATION_SIZE)), 1)
+ifeq ($(strip $(OPTIMIZATION)), SIZE)
 	strip --strip-all $@
 	strip --strip-all -R .note -R .comment $@
 	strip --strip-unneeded -R .note -R .comment $@
