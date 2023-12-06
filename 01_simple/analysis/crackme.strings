@@ -2751,7 +2751,7 @@ D$09
 D$,g
 D$,g
 Enter the password: 
-password123
+s3cr3tPassw0rd
 Access granted!
 Access denied!
 ../sysdeps/x86/dl-cacheinfo.h

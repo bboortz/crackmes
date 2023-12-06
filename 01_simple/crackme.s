@@ -6,7 +6,7 @@
 .LC1:
 	.string	"%s"
 .LC2:
-	.string	"password123"
+	.string	"s3cr3tPassw0rd"
 .LC3:
 	.string	"Access granted!"
 .LC4:
