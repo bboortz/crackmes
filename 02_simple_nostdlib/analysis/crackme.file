@@ -1,5 +1,4 @@
-crackme:    ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, stripped
-crackme.c:  ASCII text
-crackme.o:  ELF 32-bit LSB relocatable, Intel 80386, version 1 (SYSV), not stripped
-crackme.s:  assembler source, ASCII text
-crackme.s1: C source, ASCII text, with CRLF line terminators
+crackme:   ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, BuildID[sha1]=ef78675b1f48f131824ce156a686b78a15d56d10, stripped
+crackme.c: ASCII text
+crackme.o: ELF 32-bit LSB relocatable, Intel 80386, version 1 (SYSV), not stripped
+crackme.s: assembler source, ASCII text

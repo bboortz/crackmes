@@ -1,10 +1,14 @@
 #
 # *** Configuration ***
 #
-NOSTD 							?= 0
-STATIC 							?= 1
-OPTIMIZATION_SIZE 	?= 1
-OPTIMIZATION_DEBUG 	?= 0
+NOSTD 				?= 1
+STATIC 				?= 1
+OPTIMIZATION 	?= SIZE
+# SIZE 			- optimization for small binary size
+# DEBUG 		- optimization for good debugging expierience
+# NO 				- no compiler optimization
+# DEFAULT		- normal compiler optimization
+
 
 # 
 # *** Compiler ***
@@ -12,6 +16,7 @@ OPTIMIZATION_DEBUG 	?= 0
 CC = gcc
 OBJCONV = objconv
 ASM = nasm
+
 
 # 
 # *** Compiler flags ***
@@ -27,8 +32,7 @@ CFLAGS_STD = -std=c99 -m32
 # -std=c99 	- define the C standard that the compiler supports
 # -m32 			- compile for a 32 bit environment
 
-
-ifeq ($(strip $(OPTIMIZATION_SIZE)), 1)
+ifeq ($(strip $(OPTIMIZATION)), SIZE)
 CFLAGS_OPTIMIZATIONS = -Os -s -g0 -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-asynchronous-unwind-tables
 # -Os 														- optimize for size
 # -s - remove all symbol table and relocation information from the executable
@@ -37,15 +41,16 @@ CFLAGS_OPTIMIZATIONS = -Os -s -g0 -ffunction-sections -fdata-sections -Wl,--gc-s
 # -fdata-sections 								- place each function or data item into its own section 
 # -Wl,--gc-sections 							- remove unused sections which produce smaller statically linked executables
 # -fno-asynchronous-unwind-tables - generate unwind table in DWARF format which creates ~5% smaller results
-else ifeq ($(strip $(OPTIMIZATION_DEBUG)), 1)
+ else ifeq ($(strip $(OPTIMIZATION)), DEBUG)
 CFLAGS_OPTIMIZATIONS = -Og
 # -Og 														- optimize for good debugging experience
+else ifeq ($(strip $(OPTIMIZATION)), NO)
+CFLAGS_OPTIMIZATIONS = -O0
+# -O0 														- disable all optimizations
 else
 CFLAGS_OPTIMIZATIONS = -O2
-# -O0 														- disable all optimizations
 # -O2 														- optimization which does not negatively affect the speed
 endif
-
 
 CFLAGS_NO_LINKER = -c
 # -c 			- dont run the linker

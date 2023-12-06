@@ -1,2 +1,6 @@
+GCC: (GNU) 13.2.1 20230801
 .shstrtab
+.note.gnu.build-id
+.note.gnu.property
 .text
+.comment

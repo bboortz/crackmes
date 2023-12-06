@@ -4152,6 +4152,7 @@ glibc.rtld.optional_static_tls
 glibc.malloc.tcache_max
 glibc.malloc.check
 MALLOC_CHECK_
+GCC: (GNU) 13.2.1 20230801
 stapsdt
 libc
 setjmp
@@ -4397,6 +4398,8 @@ libgcc
 unwind
 4@4(%esp) 4@8(%esp)
 .shstrtab
+.note.gnu.build-id
+.note.gnu.property
 .note.ABI-tag
 .rel.plt
 .init
@@ -4415,4 +4418,5 @@ unwind
 .got.plt
 .data
 .bss
+.comment
 .note.stapsdt

@@ -14,56 +14,64 @@ Program Header:
          filesz 0x00032b0c memsz 0x00032b0c flags r--
     LOAD off    0x000bca68 vaddr 0x08104a68 paddr 0x08104a68 align 2**12
          filesz 0x00003460 memsz 0x000062c0 flags rw-
-    NOTE off    0x000001ac vaddr 0x00000000 paddr 0x00000000 align 2**2
-         filesz 0x00000020 memsz 0x00000020 flags r--
+    NOTE off    0x00000154 vaddr 0x08048154 paddr 0x08048154 align 2**2
+         filesz 0x00000078 memsz 0x00000078 flags r--
      TLS off    0x000bca68 vaddr 0x08104a68 paddr 0x08104a68 align 2**2
          filesz 0x0000000c memsz 0x0000002c flags r--
-0x6474e553 off    0x00000000 vaddr 0x08048178 paddr 0x00000000 align 2**2
-         filesz 0x00000000 memsz 0x00000000 flags r--
-   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**2
+0x6474e553 off    0x00000178 vaddr 0x08048178 paddr 0x08048178 align 2**2
+         filesz 0x00000034 memsz 0x00000034 flags r--
+   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**4
          filesz 0x00000000 memsz 0x00000000 flags rw-
+   RELRO off    0x000bca68 vaddr 0x08104a68 paddr 0x08104a68 align 2**0
+         filesz 0x00002598 memsz 0x00002598 flags r--
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .note.ABI-tag 00000020  080481ac  080481ac  000001ac  2**2
+  0 .note.gnu.build-id 00000024  08048154  08048154  00000154  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  1 .rel.plt      00000070  080481cc  080481cc  000001cc  2**2
+  1 .note.gnu.property 00000034  08048178  08048178  00000178  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  2 .init         00000024  08049000  08049000  00001000  2**2
+  2 .note.ABI-tag 00000020  080481ac  080481ac  000001ac  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .rel.plt      00000070  080481cc  080481cc  000001cc  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .init         00000024  08049000  08049000  00001000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  3 .plt          00000008  08049028  08049028  00001028  2**3
+  5 .plt          00000008  08049028  08049028  00001028  2**3
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  4 .text         00086fec  08049030  08049030  00001030  2**4
+  6 .text         00086fec  08049030  08049030  00001030  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  5 .fini         00000018  080d001c  080d001c  0008801c  2**2
+  7 .fini         00000018  080d001c  080d001c  0008801c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  6 .rodata       0001c824  080d1000  080d1000  00089000  2**5
+  8 .rodata       0001c824  080d1000  080d1000  00089000  2**5
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .stapsdt.base 00000001  080ed824  080ed824  000a5824  2**0
+  9 .stapsdt.base 00000001  080ed824  080ed824  000a5824  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .eh_frame     000161ec  080ed828  080ed828  000a5828  2**2
+ 10 .eh_frame     000161ec  080ed828  080ed828  000a5828  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  9 .gcc_except_table 000000f8  08103a14  08103a14  000bba14  2**0
+ 11 .gcc_except_table 000000f8  08103a14  08103a14  000bba14  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
- 10 .tdata        0000000c  08104a68  08104a68  000bca68  2**2
+ 12 .tdata        0000000c  08104a68  08104a68  000bca68  2**2
                   CONTENTS, ALLOC, LOAD, DATA, THREAD_LOCAL
- 11 .tbss         00000020  08104a74  08104a74  000bca74  2**2
+ 13 .tbss         00000020  08104a74  08104a74  000bca74  2**2
                   ALLOC, THREAD_LOCAL
- 12 .init_array   00000004  08104a74  08104a74  000bca74  2**2
+ 14 .init_array   00000004  08104a74  08104a74  000bca74  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 13 .fini_array   00000008  08104a78  08104a78  000bca78  2**2
+ 15 .fini_array   00000008  08104a78  08104a78  000bca78  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 14 .data.rel.ro  00002514  08104a80  08104a80  000bca80  2**5
+ 16 .data.rel.ro  00002514  08104a80  08104a80  000bca80  2**5
                   CONTENTS, ALLOC, LOAD, DATA
- 15 .got          0000004c  08106f94  08106f94  000bef94  2**2
+ 17 .got          0000004c  08106f94  08106f94  000bef94  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 16 .got.plt      00000010  08106ff4  08106ff4  000beff4  2**2
+ 18 .got.plt      00000010  08106ff4  08106ff4  000beff4  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 17 .data         00000ea8  08107020  08107020  000bf020  2**5
+ 19 .data         00000ea8  08107020  08107020  000bf020  2**5
                   CONTENTS, ALLOC, LOAD, DATA
- 18 .bss          00002e48  08107ee0  08107ee0  000bfec8  2**5
+ 20 .bss          00002e48  08107ee0  08107ee0  000bfec8  2**5
                   ALLOC
- 19 .note.stapsdt 000012ac  00000000  00000000  000bfec8  2**2
+ 21 .comment      0000001b  00000000  00000000  000bfec8  2**0
+                  CONTENTS, READONLY
+ 22 .note.stapsdt 000012ac  00000000  00000000  000bfee4  2**2
                   CONTENTS, READONLY
 SYMBOL TABLE:
 no symbols
