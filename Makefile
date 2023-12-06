@@ -1,7 +1,7 @@
 #
 # *** Configuration ***
 #
-NOSTD 							?= 1
+NOSTD 							?= 0
 STATIC 							?= 1
 OPTIMIZATION_SIZE 	?= 1
 OPTIMIZATION_DEBUG 	?= 0
