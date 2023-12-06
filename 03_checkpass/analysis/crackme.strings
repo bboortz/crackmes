@@ -1,0 +1,54 @@
+td\ 
+/lib/ld-linux.so.2
+_IO_stdin_used
+__libc_start_main
+strncmp
+puts
+printf
+fgets
+strncpy
+__cxa_finalize
+stdin
+__stack_chk_fail
+libc.so.6
+GLIBC_2.1.3
+GLIBC_2.4
+GLIBC_2.0
+GLIBC_2.34
+_ITM_deregisterTMCloneTable
+__gmon_start__
+_ITM_registerTMCloneTable
+Y[^]
+supe
+rS3c
+rc3t
+[^_]
+Access granted!
+Access denied!
+1111
+ *** enjoy the crackme ***
+Enter the password: 
+;*2$"
+.shstrtab
+.interp
+.note.ABI-tag
+.gnu.hash
+.dynsym
+.dynstr
+.gnu.version
+.gnu.version_r
+.rel.dyn
+.rel.plt
+.init
+.text
+.fini
+.rodata
+.eh_frame_hdr
+.eh_frame
+.init_array
+.fini_array
+.dynamic
+.got
+.got.plt
+.data
+.bss

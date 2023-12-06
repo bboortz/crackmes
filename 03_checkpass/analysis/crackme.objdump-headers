@@ -1,0 +1,117 @@
+
+crackme:     file format elf32-i386
+crackme
+architecture: i386, flags 0x00000150:
+HAS_SYMS, DYNAMIC, D_PAGED
+start address 0x00001140
+
+Program Header:
+    PHDR off    0x00000034 vaddr 0x00000034 paddr 0x00000034 align 2**2
+         filesz 0x00000160 memsz 0x00000160 flags r--
+  INTERP off    0x000001b4 vaddr 0x000001b4 paddr 0x000001b4 align 2**0
+         filesz 0x00000013 memsz 0x00000013 flags r--
+    LOAD off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**12
+         filesz 0x00000510 memsz 0x00000510 flags r--
+    LOAD off    0x00001000 vaddr 0x00001000 paddr 0x00001000 align 2**12
+         filesz 0x00000478 memsz 0x00000478 flags r-x
+    LOAD off    0x00002000 vaddr 0x00002000 paddr 0x00002000 align 2**12
+         filesz 0x0000010c memsz 0x0000010c flags r--
+    LOAD off    0x00002ee0 vaddr 0x00003ee0 paddr 0x00003ee0 align 2**12
+         filesz 0x0000013c memsz 0x00000140 flags rw-
+ DYNAMIC off    0x00002ee8 vaddr 0x00003ee8 paddr 0x00003ee8 align 2**2
+         filesz 0x000000f0 memsz 0x000000f0 flags rw-
+    NOTE off    0x00000220 vaddr 0x00000000 paddr 0x00000000 align 2**2
+         filesz 0x00000020 memsz 0x00000020 flags r--
+0x6474e553 off    0x00000000 vaddr 0x000001ec paddr 0x00000000 align 2**2
+         filesz 0x00000000 memsz 0x00000000 flags r--
+EH_FRAME off    0x0000205c vaddr 0x0000205c paddr 0x0000205c align 2**2
+         filesz 0x0000002c memsz 0x0000002c flags r--
+   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**2
+         filesz 0x00000000 memsz 0x00000000 flags rw-
+
+Dynamic Section:
+  NEEDED               libc.so.6
+  INIT                 0x00001000
+  FINI                 0x00001460
+  INIT_ARRAY           0x00003ee0
+  INIT_ARRAYSZ         0x00000004
+  FINI_ARRAY           0x00003ee4
+  FINI_ARRAYSZ         0x00000004
+  GNU_HASH             0x00000240
+  STRTAB               0x00000340
+  SYMTAB               0x00000260
+  STRSZ                0x000000e4
+  SYMENT               0x00000010
+  DEBUG                0x00000000
+  PLTGOT               0x00003ff4
+  PLTRELSZ             0x00000030
+  PLTREL               0x00000011
+  JMPREL               0x000004e0
+  REL                  0x00000490
+  RELSZ                0x00000050
+  RELENT               0x00000008
+  FLAGS_1              0x08000000
+  VERNEED              0x00000440
+  VERNEEDNUM           0x00000001
+  VERSYM               0x00000424
+  RELCOUNT             0x00000004
+
+Version References:
+  required from libc.so.6:
+    0x09691f73 0x00 05 GLIBC_2.1.3
+    0x0d696914 0x00 04 GLIBC_2.4
+    0x0d696910 0x00 03 GLIBC_2.0
+    0x069691b4 0x00 02 GLIBC_2.34
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .interp       00000013  000001b4  000001b4  000001b4  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .note.ABI-tag 00000020  00000220  00000220  00000220  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .gnu.hash     00000020  00000240  00000240  00000240  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .dynsym       000000e0  00000260  00000260  00000260  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .dynstr       000000e4  00000340  00000340  00000340  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  5 .gnu.version  0000001c  00000424  00000424  00000424  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  6 .gnu.version_r 00000050  00000440  00000440  00000440  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .rel.dyn      00000050  00000490  00000490  00000490  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .rel.plt      00000030  000004e0  000004e0  000004e0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  9 .init         00000024  00001000  00001000  00001000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 10 .plt          00000070  00001030  00001030  00001030  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 11 .text         000003bd  000010a0  000010a0  000010a0  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 12 .fini         00000018  00001460  00001460  00001460  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 13 .rodata       0000005a  00002000  00002000  00002000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+ 14 .eh_frame_hdr 0000002c  0000205c  0000205c  0000205c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+ 15 .eh_frame     00000084  00002088  00002088  00002088  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+ 16 .init_array   00000004  00003ee0  00003ee0  00002ee0  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 17 .fini_array   00000004  00003ee4  00003ee4  00002ee4  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 18 .dynamic      000000f0  00003ee8  00003ee8  00002ee8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 19 .got          0000001c  00003fd8  00003fd8  00002fd8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 20 .got.plt      00000024  00003ff4  00003ff4  00002ff4  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 21 .data         00000004  00004018  00004018  00003018  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 22 .bss          00000004  0000401c  0000401c  0000301c  2**0
+                  ALLOC
+SYMBOL TABLE:
+no symbols
+
+
