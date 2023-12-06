@@ -1,0 +1,11 @@
+
+crackme:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+08049000 <.text>:
+ 8049000:	b8 01 00 00 00       	mov    $0x1,%eax
+ 8049005:	bb 02 00 00 00       	mov    $0x2,%ebx
+ 804900a:	0f 05                	syscall
+ 804900c:	c3                   	ret
