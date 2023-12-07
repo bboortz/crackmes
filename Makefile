@@ -112,7 +112,7 @@ clean:
 	rm -f $(OUTPUT) $(OUTPUT).o $(OUTPUT).obj $(OUTPUT).s
 	rm -rf analysis
 
-analysis:
+analysis: 
 	mkdir -p analysis
 	ls -la $(OUTPUT)* > analysis/$(OUTPUT).ls
 	du -shc $(OUTPUT)* > analysis/$(OUTPUT).du
