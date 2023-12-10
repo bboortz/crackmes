@@ -1,0 +1,14 @@
+# build
+```
+make clean all
+```
+
+# task
+* Let the crackme print "Right password!"
+
+# solution
+* the solution can be found in SOLUTION.md
+
+
+# Ref
+* https://github.com/bboortz/crackmes/tree/main/08_buffer_overflow
