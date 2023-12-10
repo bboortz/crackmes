@@ -1,0 +1,44 @@
+/lib64/ld-linux-x86-64.so.2
+__libc_start_main
+puts
+__isoc99_scanf
+exit
+printf
+libc.so.6
+GLIBC_2.7
+GLIBC_2.2.5
+GLIBC_2.34
+_ITM_deregisterTMCloneTable
+__gmon_start__
+_ITM_registerTMCloneTable
+PTE1
+H=0@@
+11111111H
+Right password!
+Enter the password: 
+ *** enjoy the crackme ***
+Wrong password!
+;*3$"
+.shstrtab
+.interp
+.note.ABI-tag
+.gnu.hash
+.dynsym
+.dynstr
+.gnu.version
+.gnu.version_r
+.rela.dyn
+.rela.plt
+.init
+.text
+.fini
+.rodata
+.eh_frame_hdr
+.eh_frame
+.init_array
+.fini_array
+.dynamic
+.got
+.got.plt
+.data
+.bss
