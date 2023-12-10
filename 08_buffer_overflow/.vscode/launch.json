@@ -1,0 +1,56 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug+",
+      "type": "gdb",
+      "gdbpath": "/usr/bin/gdb",
+      "request": "launch",
+      "target": "${workspaceFolder}/output/crackme",
+      "cwd": "${workspaceRoot}",
+      "valuesFormatting": "disabled",
+      "printCalls": true,
+      "showDevDebugOutput": false,
+      "internalConsoleOptions": "neverOpen",
+      "stopAtEntry": true,
+      "arguments": "< in-good.txt",
+      "env": {},
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "Debug-",
+      "type": "gdb",
+      "gdbpath": "/usr/bin/gdb",
+      "request": "launch",
+      "target": "${workspaceFolder}/output/crackme",
+      "cwd": "${workspaceRoot}",
+      "valuesFormatting": "disabled",
+      "printCalls": true,
+      "showDevDebugOutput": false,
+      "internalConsoleOptions": "neverOpen",
+      "stopAtEntry": true,
+      "arguments": "< in-bad.txt",
+      "env": {},
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/benni/git/crackmes/08_buffer_overflow",
+      "program": "/home/benni/git/crackmes/08_buffer_overflow/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
