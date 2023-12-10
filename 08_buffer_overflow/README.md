@@ -8,3 +8,7 @@ make clean all
 
 # solution
 * the solution can be found in SOLUTION.md
+
+
+# Ref
+* https://github.com/bboortz/crackmes/tree/main/08_buffer_overflow
