@@ -11,7 +11,7 @@
 #
 NOSTD 			?= 0
 STATIC 			?= 0
-OPTIMIZATION 	?= DEBUG
+OPTIMIZATION 	?= NO
 # SIZE 			- optimization for small binary size
 # DEBUG 		- optimization for good debugging expierience
 # NO 				- no compiler optimization
@@ -50,7 +50,7 @@ else ifeq ($(strip $(OPTIMIZATION)), NO)
 CFLAGS_OPTIMIZATIONS = -O0
 # -O0 														- disable all optimizations
 else
-CFLAGS_OPTIMIZATIONS = -02
+CFLAGS_OPTIMIZATIONS = -O2
 # -O2 														- optimization which does not negatively affect the speed
 endif
 
@@ -150,13 +150,7 @@ DEPS		:= $(OBJECTS:.o=.d)
 OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 
 all: $(OUTPUT) $(MAIN)
-ifeq ($(strip $(OPTIMIZATION)), SIZE)
-	strip --strip-all $(OUTPUTMAIN)
-	strip --strip-all -R .note -R .comment $(OUTPUTMAIN)
-	strip --strip-unneeded -R .note -R .comment $(OUTPUTMAIN)
-	strip --remove-section=.note.gnu.build-id $(OUTPUTMAIN)
-	strip --remove-section=.note.gnu.property $(OUTPUTMAIN)
-else ifeq ($(strip $(OPTIMIZATION)), NORMAL)
+ifneq ($(strip $(OPTIMIZATION)), DEBUG)
 	strip --strip-all $(OUTPUTMAIN)
 	strip --strip-all -R .note -R .comment $(OUTPUTMAIN)
 	strip --strip-unneeded -R .note -R .comment $(OUTPUTMAIN)
