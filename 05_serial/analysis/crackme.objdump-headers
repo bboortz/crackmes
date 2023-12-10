@@ -3,59 +3,57 @@ output/crackme:     file format elf32-i386
 output/crackme
 architecture: i386, flags 0x00000150:
 HAS_SYMS, DYNAMIC, D_PAGED
-start address 0x000010b0
+start address 0x00001150
 
 Program Header:
     PHDR off    0x00000034 vaddr 0x00000034 paddr 0x00000034 align 2**2
-         filesz 0x00000180 memsz 0x00000180 flags r--
+         filesz 0x00000160 memsz 0x00000160 flags r--
   INTERP off    0x000001b4 vaddr 0x000001b4 paddr 0x000001b4 align 2**0
          filesz 0x00000013 memsz 0x00000013 flags r--
     LOAD off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**12
-         filesz 0x0000054c memsz 0x0000054c flags r--
+         filesz 0x00000530 memsz 0x00000530 flags r--
     LOAD off    0x00001000 vaddr 0x00001000 paddr 0x00001000 align 2**12
-         filesz 0x00000488 memsz 0x00000488 flags r-x
+         filesz 0x00000414 memsz 0x00000414 flags r-x
     LOAD off    0x00002000 vaddr 0x00002000 paddr 0x00002000 align 2**12
-         filesz 0x00000238 memsz 0x00000238 flags r--
+         filesz 0x000000ec memsz 0x000000ec flags r--
     LOAD off    0x00002ee0 vaddr 0x00003ee0 paddr 0x00003ee0 align 2**12
-         filesz 0x00000144 memsz 0x00000148 flags rw-
+         filesz 0x0000013c memsz 0x00000140 flags rw-
  DYNAMIC off    0x00002ee8 vaddr 0x00003ee8 paddr 0x00003ee8 align 2**2
          filesz 0x000000f0 memsz 0x000000f0 flags rw-
-    NOTE off    0x000001c8 vaddr 0x000001c8 paddr 0x000001c8 align 2**2
-         filesz 0x00000078 memsz 0x00000078 flags r--
-0x6474e553 off    0x000001ec vaddr 0x000001ec paddr 0x000001ec align 2**2
-         filesz 0x00000034 memsz 0x00000034 flags r--
-EH_FRAME off    0x0000205c vaddr 0x0000205c paddr 0x0000205c align 2**2
-         filesz 0x00000054 memsz 0x00000054 flags r--
-   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**4
+    NOTE off    0x00000220 vaddr 0x00000000 paddr 0x00000000 align 2**2
+         filesz 0x00000020 memsz 0x00000020 flags r--
+0x6474e553 off    0x00000000 vaddr 0x000001ec paddr 0x00000000 align 2**2
+         filesz 0x00000000 memsz 0x00000000 flags r--
+EH_FRAME off    0x00002058 vaddr 0x00002058 paddr 0x00002058 align 2**2
+         filesz 0x00000024 memsz 0x00000024 flags r--
+   STACK off    0x00000000 vaddr 0x00000000 paddr 0x00000000 align 2**2
          filesz 0x00000000 memsz 0x00000000 flags rw-
-   RELRO off    0x00002ee0 vaddr 0x00003ee0 paddr 0x00003ee0 align 2**0
-         filesz 0x00000120 memsz 0x00000120 flags r--
 
 Dynamic Section:
   NEEDED               libc.so.6
   INIT                 0x00001000
-  FINI                 0x00001470
+  FINI                 0x000013fc
   INIT_ARRAY           0x00003ee0
   INIT_ARRAYSZ         0x00000004
   FINI_ARRAY           0x00003ee4
   FINI_ARRAYSZ         0x00000004
   GNU_HASH             0x00000240
-  STRTAB               0x00000350
+  STRTAB               0x00000340
   SYMTAB               0x00000260
-  STRSZ                0x000000f5
+  STRSZ                0x000000f3
   SYMENT               0x00000010
   DEBUG                0x00000000
   PLTGOT               0x00003ff4
-  PLTRELSZ             0x00000038
+  PLTRELSZ             0x00000030
   PLTREL               0x00000011
-  JMPREL               0x00000514
-  REL                  0x000004c4
+  JMPREL               0x00000500
+  REL                  0x000004b0
   RELSZ                0x00000050
   RELENT               0x00000008
   FLAGS_1              0x08000000
-  VERNEED              0x00000464
+  VERNEED              0x00000450
   VERNEEDNUM           0x00000001
-  VERSYM               0x00000446
+  VERSYM               0x00000434
   RELCOUNT             0x00000004
 
 Version References:
@@ -70,111 +68,51 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .interp       00000013  000001b4  000001b4  000001b4  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  1 .note.gnu.build-id 00000024  000001c8  000001c8  000001c8  2**2
+  1 .note.ABI-tag 00000020  00000220  00000220  00000220  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  2 .note.gnu.property 00000034  000001ec  000001ec  000001ec  2**2
+  2 .gnu.hash     00000020  00000240  00000240  00000240  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .note.ABI-tag 00000020  00000220  00000220  00000220  2**2
+  3 .dynsym       000000e0  00000260  00000260  00000260  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .gnu.hash     00000020  00000240  00000240  00000240  2**2
+  4 .dynstr       000000f3  00000340  00000340  00000340  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .dynsym       000000f0  00000260  00000260  00000260  2**2
+  5 .gnu.version  0000001c  00000434  00000434  00000434  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  6 .dynstr       000000f5  00000350  00000350  00000350  2**0
+  6 .gnu.version_r 00000060  00000450  00000450  00000450  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .gnu.version  0000001e  00000446  00000446  00000446  2**1
+  7 .rel.dyn      00000050  000004b0  000004b0  000004b0  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .gnu.version_r 00000060  00000464  00000464  00000464  2**2
+  8 .rel.plt      00000030  00000500  00000500  00000500  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  9 .rel.dyn      00000050  000004c4  000004c4  000004c4  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
- 10 .rel.plt      00000038  00000514  00000514  00000514  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
- 11 .init         00000024  00001000  00001000  00001000  2**2
+  9 .init         00000024  00001000  00001000  00001000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 12 .plt          00000080  00001030  00001030  00001030  2**4
+ 10 .plt          00000070  00001030  00001030  00001030  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 13 .text         000003bd  000010b0  000010b0  000010b0  2**4
+ 11 .text         00000359  000010a0  000010a0  000010a0  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 14 .fini         00000018  00001470  00001470  00001470  2**2
+ 12 .fini         00000018  000013fc  000013fc  000013fc  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 15 .rodata       0000005c  00002000  00002000  00002000  2**2
+ 13 .rodata       00000057  00002000  00002000  00002000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
- 16 .eh_frame_hdr 00000054  0000205c  0000205c  0000205c  2**2
+ 14 .eh_frame_hdr 00000024  00002058  00002058  00002058  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
- 17 .eh_frame     00000188  000020b0  000020b0  000020b0  2**2
+ 15 .eh_frame     00000070  0000207c  0000207c  0000207c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
- 18 .init_array   00000004  00003ee0  00003ee0  00002ee0  2**2
+ 16 .init_array   00000004  00003ee0  00003ee0  00002ee0  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 19 .fini_array   00000004  00003ee4  00003ee4  00002ee4  2**2
+ 17 .fini_array   00000004  00003ee4  00003ee4  00002ee4  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 20 .dynamic      000000f0  00003ee8  00003ee8  00002ee8  2**2
+ 18 .dynamic      000000f0  00003ee8  00003ee8  00002ee8  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 21 .got          0000001c  00003fd8  00003fd8  00002fd8  2**2
+ 19 .got          0000001c  00003fd8  00003fd8  00002fd8  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 22 .got.plt      00000028  00003ff4  00003ff4  00002ff4  2**2
+ 20 .got.plt      00000024  00003ff4  00003ff4  00002ff4  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 23 .data         00000008  0000401c  0000401c  0000301c  2**2
+ 21 .data         00000004  00004018  00004018  00003018  2**2
                   CONTENTS, ALLOC, LOAD, DATA
- 24 .bss          00000004  00004024  00004024  00003024  2**0
+ 22 .bss          00000004  0000401c  0000401c  0000301c  2**0
                   ALLOC
- 25 .comment      0000001b  00000000  00000000  00003024  2**0
-                  CONTENTS, READONLY
- 26 .debug_aranges 00000020  00000000  00000000  0000303f  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 27 .debug_info   00000593  00000000  00000000  0000305f  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 28 .debug_abbrev 00000219  00000000  00000000  000035f2  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 29 .debug_line   000001fe  00000000  00000000  0000380b  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 30 .debug_str    00000322  00000000  00000000  00003a09  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 31 .debug_line_str 000000dc  00000000  00000000  00003d2b  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 32 .debug_loclists 000001d6  00000000  00000000  00003e07  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
- 33 .debug_rnglists 0000001c  00000000  00000000  00003fdd  2**0
-                  CONTENTS, READONLY, DEBUGGING, OCTETS
 SYMBOL TABLE:
-00000000 l    df *ABS*	00000000              main.c
-00000000 l    df *ABS*	00000000              
-00003ee8 l     O .dynamic	00000000              _DYNAMIC
-0000205c l       .eh_frame_hdr	00000000              __GNU_EH_FRAME_HDR
-00003ff4 l     O .got.plt	00000000              _GLOBAL_OFFSET_TABLE_
-00000000       F *UND*	00000000              __libc_start_main@GLIBC_2.34
-00000000  w      *UND*	00000000              _ITM_deregisterTMCloneTable
-000010e0 g     F .text	00000004              .hidden __x86.get_pc_thunk.bx
-0000401c  w      .data	00000000              data_start
-00000000       F *UND*	00000000              printf@GLIBC_2.0
-00000000       F *UND*	00000000              fgets@GLIBC_2.0
-00004024 g       .data	00000000              _edata
-00001218 g     F .text	00000020              ok
-00001238 g     F .text	00000020              not_ok
-00001470 g     F .fini	00000000              .hidden _fini
-00000000       F *UND*	00000000              __stack_chk_fail@GLIBC_2.4
-000011dd g     F .text	0000003b              substr
-000011d9 g     F .text	00000000              .hidden __x86.get_pc_thunk.dx
-00000000  w    F *UND*	00000000              __cxa_finalize@GLIBC_2.1.3
-0000401c g       .data	00000000              __data_start
-00000000       F *UND*	00000000              puts@GLIBC_2.0
-00000000  w      *UND*	00000000              __gmon_start__
-00004020 g     O .data	00000000              .hidden __dso_handle
-00002004 g     O .rodata	00000004              _IO_stdin_used
-00000000       F *UND*	00000000              strlen@GLIBC_2.0
-00000000       O *UND*	00000000              stdin@GLIBC_2.0
-00000000       F *UND*	00000000              snprintf@GLIBC_2.0
-00004028 g       .bss	00000000              _end
-000010b0 g     F .text	00000030              _start
-00002000 g     O .rodata	00000004              _fp_hw
-00001258 g     F .text	00000141              check_serial
-00004024 g       .bss	00000000              __bss_start
-00001399 g     F .text	000000b6              main
-00001469 g     F .text	00000000              .hidden __x86.get_pc_thunk.ax
-00001450 g     F .text	00000019              .hidden __stack_chk_fail_local
-00004024 g     O .data	00000000              .hidden __TMC_END__
-00000000  w      *UND*	00000000              _ITM_registerTMCloneTable
-00001000 g     F .init	00000000              .hidden _init
-00000000       F *UND*	00000000              __ctype_b_loc@GLIBC_2.3
+no symbols
 
 

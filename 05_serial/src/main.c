@@ -10,16 +10,15 @@ int substr(char *dst, char *src, size_t n) {
 }
 
 void ok() {
-  printf("Access granted!\n");
+  printf("\nAccess granted!\n");
 }
 
 void not_ok() {
-  printf("Access denied!\n");
+  printf("\nAccess denied!\n");
 }
 
-// valid: 9711-9796-8887-9714
 int check_serial(const char* serial, size_t length) {
-  int i, set1 = 0, set2 = 0, set3 = 0, set4 = 0;
+  int i, set1 = 0, set2 = 0, set3 = 0, set4 = 0, sum = 0;
 
   // Verify the serial format: nnnn-nnnn-nnnn-nnnn
   if (strlen(serial) != length) {
@@ -28,7 +27,7 @@ int check_serial(const char* serial, size_t length) {
 
   for (i = 0; i < (int) length; i++) {
     char c = serial[i];
-
+    
     if (i == 4 || i == 9 || i == 14) {
       if (c != '-') {
         return 0; // Invalid separator at positions 4, 9, and 14
@@ -36,6 +35,7 @@ int check_serial(const char* serial, size_t length) {
     } else if (!isdigit(c)) {
       return 0; // Non-numeric characters found
     }
+    sum += c;
 
     if (i < 4) {
       set1 += c - '0';
@@ -61,6 +61,10 @@ int check_serial(const char* serial, size_t length) {
   // Check the computed sums for each set
   if (set1 != 18 || set2 != 18 || set3 != 18 || set4 != 18) {
     return 0; // Invalid sums for sets
+  }
+  //printf("sum: %d", sum);
+  if (1004 != sum) {
+    return 0;
   }
 
   return 1; // Serial is valid

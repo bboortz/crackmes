@@ -11,7 +11,7 @@
 #
 NOSTD 			?= 0
 STATIC 			?= 0
-OPTIMIZATION 	?= DEBUG
+OPTIMIZATION 	?= SIZE
 # SIZE 			- optimization for small binary size
 # DEBUG 		- optimization for good debugging expierience
 # NO 				- no compiler optimization
@@ -83,6 +83,9 @@ CFLAGS_TO_EXE = $(CFLAGS_ERROR) $(CFLAGS_STD) $(CFLAGS_OPTIMIZATIONS) $(CFLAGS_L
 # define the C compiler to use
 CC = gcc
 
+# tar
+TAR = tar
+
 # define any compile-time flags
 #CFLAGS	:= -Wall -Wextra -g
 
@@ -145,7 +148,7 @@ DEPS		:= $(OBJECTS:.o=.d)
 OUTPUTMAIN	:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 
 all: $(OUTPUT) $(MAIN)
-ifeq ($(strip $(OPTIMIZATION)), SIZE)
+ifneq ($(strip $(OPTIMIZATION)), NO)
 	strip --strip-all $(OUTPUTMAIN)
 	strip --strip-all -R .note -R .comment $(OUTPUTMAIN)
 	strip --strip-unneeded -R .note -R .comment $(OUTPUTMAIN)
@@ -178,6 +181,9 @@ clean:
 	$(RM) $(call FIXPATH,$(DEPS))
 	$(RM) analysis/*
 	@echo Cleanup complete!
+
+tar: all
+	$(TAR) zcvf $(MAIN).tar.gz README.md SOLUTION.md -C output crackme 
 
 analysis: all
 	mkdir -p analysis
