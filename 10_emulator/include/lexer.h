@@ -7,6 +7,7 @@
 
 
 #define MAX_TOKEN_NODES 100
+#define MAX_TOKEN_VALUE 20
 
 
 // lexer token types
@@ -25,7 +26,7 @@ typedef struct {
     lexer_token_type type;
     int line;
     int pos;
-    char value[20];
+    char value[MAX_TOKEN_VALUE];
 } lexer_token;
 
 

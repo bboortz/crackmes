@@ -83,7 +83,7 @@ CFLAGS_TO_EXE = $(CFLAGS_ERROR) $(CFLAGS_STD) $(CFLAGS_OPTIMIZATIONS) $(CFLAGS_S
 #
 
 # define the C compiler to use
-CC = gcc
+CC = tests_include/afl/afl-gcc # gcc
 
 # tar
 TAR = tar
@@ -195,7 +195,7 @@ $(TESTPARSER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTMAIN): compiletestobjects $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER)
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 	@echo Tests compiled!
 
 $(MAIN): compileobjects
@@ -262,9 +262,6 @@ run: all
 	@echo Executing 'run: all' complete!
 
 runtests: compileobjects $(TESTMAIN)
-	./$(TESTOUTPUTMAIN)
-	./$(TESTOUTPUTSCANNER)
-	./$(TESTOUTPUTLEXER)
-	./$(TESTOUTPUTSCANNER)
+	./tests.sh
 	@echo Executing 'run: all' complete!
 

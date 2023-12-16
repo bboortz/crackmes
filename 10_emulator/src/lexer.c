@@ -71,7 +71,7 @@ lexer_token* lexer_process_string(char *input) {
     int i = 0;
     while (MAX_TOKEN_NODES > i) {
         cst_token_arr[i] = lexer_next_token(input, &pos, &line);
-        // cst_print_node(cst_token_arr[i]);
+        // lexer_print_token(cst_token_arr[i]);
         
         if (TOKEN_END_OF_INPUT == cst_token_arr[i].type) {
             break;
@@ -110,8 +110,6 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
     while (p < length && isspace(input[p])) {
         token.pos++;
         p++;
-
-        
     }
 
     // Check for end of input
@@ -121,7 +119,6 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
         return token;
     }
 
-    
     // Check for comma (,)
     else if (',' == input[p]) {
         token.value[0] = input[p++];
@@ -132,7 +129,7 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
     // Check for strings
     else if (isalpha(input[p])) {
         int j = 0;
-        while (p < length && isalpha(input[p])) {
+        while (j < MAX_TOKEN_VALUE && p < length && isalpha(input[p])) {
             token.value[j++] = input[p++];
         }
         token.value[j] = '\0';
@@ -142,7 +139,7 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
     // Check for numerical operands
     else if (isdigit(input[p])) {
         int j = 0;
-        while (p < length && isdigit(input[p])) {
+        while (j < MAX_TOKEN_VALUE && p < length && isdigit(input[p])) {
             token.value[j++] = input[p++];
         }
         token.value[j] = '\0';
@@ -156,6 +153,7 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
 
     *pos = p;
     *line = l;
+    
     return token;
 }
 

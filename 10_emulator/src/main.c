@@ -19,7 +19,6 @@ void ok(void) {
 
 
 
-
 int main(void) {
 
 

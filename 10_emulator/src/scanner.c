@@ -37,9 +37,8 @@ int scanner_scan_from_string(char *input) {
     while(i < MAX_LINES) {
         printf("> ");    
         if (fgets(buffer, sizeof(buffer), file) != NULL) {
-            printf("<%s>", buffer);
             util_trim_string(buffer);
-            printf("<%s>", buffer);
+            printf("< %s\n", buffer);
             lexer_token *lexer_token_arr = lexer_process_string(buffer);
             parser_cst_node *cst_node_arr = parser_process(lexer_token_arr, MAX_CST_NODES);
             parser_print_cst_node_arr(cst_node_arr);

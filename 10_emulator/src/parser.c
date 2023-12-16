@@ -108,6 +108,11 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size) {
                 if (CST_IGNORE == cst_node_child.type) {
                     continue;
                 }
+                if (CST_END_OF_INPUT == cst_node_child.type || CST_UNKNOWN == cst_node_child.type) {
+                    i--;
+                    break;
+                }
+                
                 cst_node.children[found] = cst_node_child;
                 found++;
             }
