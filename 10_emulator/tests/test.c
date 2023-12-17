@@ -24,7 +24,10 @@ void tearDown() {
 void test_scanner_scan_from_stdin(void) {
     printf("\n*** test_scanner_scan_from_stdin ***\n");
     
-    int result = scanner_scan_from_stdin();
+    error err = util_create_error_default();
+    int result = scanner_scan_from_stdin(&err);
+
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);
 
     TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
 }

@@ -14,9 +14,9 @@
 void scanner_print_input(char *input);
 
 
-int scanner_scan_from_string(char *filepath);
-int scanner_scan_from_file(FILE *file, char *filepath);
-int scanner_scan_from_filepath(char *filepath);
-int scanner_scan_from_stdin(void);
+int scanner_scan_from_string(char *filepath, error *err);
+int scanner_scan_from_file(FILE *file, char *filepath, error *err);
+int scanner_scan_from_filepath(char *filepath, error *err);
+int scanner_scan_from_stdin(error *err);
 
 #endif

@@ -20,8 +20,10 @@ void tearDown() {
 void test_scanner_scan_from_stdin_simple_pos(void) {
     printf("\n*** test_scanner_scan_from_stdin_simple_pos ***\n");
 
-    int result = scanner_scan_from_stdin();
-    
+    error err = util_create_error_default();
+    int result = scanner_scan_from_stdin(&err);
+
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
     TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
 }
 
@@ -29,8 +31,10 @@ void test_scanner_scan_from_filepath_multiline_pos(void) {
     printf("\n*** test_scanner_scan_from_filepath_multiline_pos ***\n");
     char *filepath = "tests_files/multiline.s";
 
-    int result = scanner_scan_from_filepath(filepath);
+    error err = util_create_error_default();
+    int result = scanner_scan_from_filepath(filepath, &err);
     
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);
     TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
 }
 
@@ -38,8 +42,10 @@ void test_scanner_scan_from_filepath_oneline_pos(void) {
     printf("\n*** test_scanner_scan_from_filepath_oneline_pos ***\n");
     char *filepath = "tests_files/oneline.s";
 
-    int result = scanner_scan_from_filepath(filepath);
+    error err = util_create_error_default();
+    int result = scanner_scan_from_filepath(filepath, &err);
     
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);
     TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
 }
 
@@ -47,8 +53,10 @@ void test_scanner_scan_from_string_simple_pos(void) {
     printf("\n*** test_scanner_scan_from_string_simple_pos ***\n");
     char input[] = "MOV a, 42";
 
-    int result = scanner_scan_from_string(input);
+    error err = util_create_error_default();
+    int result = scanner_scan_from_string(input, &err);
     
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);
     TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
 }
 

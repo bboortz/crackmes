@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "utils.h"
 #include "lexer.h"
 
 
@@ -25,29 +26,44 @@ const char* lexer_map_token_type_to_string(lexer_token_type t) {
 }
 
 
-lexer_token lexer_create_token(void) {
-    lexer_token cst_token = {0};
-
-    cst_token.line = 0;
-    cst_token.pos = 0;
-    cst_token.type = TOKEN_UNKNOWN;
-    cst_token.value[0] = '\n';
-    
-    return cst_token;
+lexer_token lexer_create_token(error *err) {
+    return lexer_create_token_values(0, 0, TOKEN_UNKNOWN, "", err);
 }
 
-lexer_token* lexer_create_token_arr(int size) {
+lexer_token lexer_create_token_values(int line, int pos, lexer_token_type type, char* value, error *err) {
+    lexer_token token = {line, pos, type, value};
+
+    token.line = line;
+    token.pos = pos;
+    token.type = type;
+
+    token.value = (char *)malloc((strlen(value) + 1) * sizeof(char));
+
+    if (token.value == NULL) {
+        *err = util_create_error(ERR_INTERNAL, ERR_CRIT_SEVERE, "Cannot allocation memory", "unclear, probably a programming mistake or unsifficient memory.");
+    }
+    util_copy_string(&token.value, value);
+    
+    return token;
+}
+
+lexer_token* lexer_create_token_arr(int size, error* err) {
     if (MAX_TOKEN_NODES < size) {
         size = MAX_TOKEN_NODES;
     } else if (0 == size) {
         size = 1;
     }
+
     lexer_token* cst_token_arr = malloc(size * sizeof(lexer_token)); // Allocate memory for an array of structs
 
     if (NULL != cst_token_arr) {
-        // Initialize the structs in the array (for demonstration, using dummy data)
-        for (int i = 0; i < size; i++) {
-            cst_token_arr[i] = lexer_create_token();
+    }
+        
+    for (int i = 0; i < size; i++) {
+        cst_token_arr[i] = lexer_create_token(err);
+
+        if (RET_ERR == util_check_error(*err) ) {
+            break;
         }
     }
 
@@ -60,18 +76,41 @@ void lexer_print_token(lexer_token node) {
     printf("lexer_token: {type: %s (%d), line: %d, pos: %d, value: \"%s\"}\n", lexer_map_token_type_to_string(node.type), node.type, node.line, node.pos, node.value); 
 }
 
+void lexer_print_token_arr(lexer_token* node_arr) {
+    printf("#####################\n");
+    int i = 0;
+     while (MAX_TOKEN_NODES > i) {
+        lexer_print_token(node_arr[i]);
+        
+        if (TOKEN_END_OF_INPUT == node_arr[i].type) {
+            break;
+        }
 
-lexer_token* lexer_process_string(char *input) {
+        i++;
+    }
+    printf("#####################\n");
+
+}
+
+
+lexer_token* lexer_process_string(char *input, error *err) {
     int line = 0;
     int pos = 0;
     
-    lexer_token* cst_token_arr = lexer_create_token_arr(MAX_TOKEN_NODES);
-
+    lexer_token* cst_token_arr = lexer_create_token_arr(MAX_TOKEN_NODES, err);
+    if (RET_ERR == util_check_error(*err) ) {
+        return cst_token_arr;
+    }
 
     int i = 0;
     while (MAX_TOKEN_NODES > i) {
-        cst_token_arr[i] = lexer_next_token(input, &pos, &line);
+        // *err = util_create_error_default();
+        cst_token_arr[i] = lexer_next_token(input, &pos, &line, err);
         // lexer_print_token(cst_token_arr[i]);
+        // util_print_error(*err);
+        if (RET_ERR == util_check_error(*err) ) {
+            break;
+        }
         
         if (TOKEN_END_OF_INPUT == cst_token_arr[i].type) {
             break;
@@ -84,16 +123,14 @@ lexer_token* lexer_process_string(char *input) {
 }
 
 // Get the next token from input
-lexer_token lexer_next_token(char *input, int *line, int *pos) {
-    lexer_token token = {0};
+lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
+    lexer_token token = lexer_create_token(err);
+
     int l = *line;
     int p = *pos;
-    int length = strlen(input);
-    // token.type = TOKEN_UNKNOWN;
+    size_t length = strlen(input);
     token.line = l;
     token.pos = p;
-    //memset(token.value, 0, strlen(token.value));
-
 
     // Check for newline
     if ('\n' == input[p] ) {
@@ -107,13 +144,13 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
     }
 
     // Skip whitespace
-    while (p < length && isspace(input[p])) {
+    while (p < (int) length && isspace(input[p])) {
         token.pos++;
         p++;
     }
 
     // Check for end of input
-    if (p == length) {
+    if (p == (int) length) {
         token.type = TOKEN_END_OF_INPUT;
         *pos = p;
         return token;
@@ -129,17 +166,35 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
     // Check for strings
     else if (isalpha(input[p])) {
         int j = 0;
-        while (j < MAX_TOKEN_VALUE && p < length && isalpha(input[p])) {
-            token.value[j++] = input[p++];
+        // TODO replace copy method!
+        char* token_str = "";
+        
+        while (p < (int) length && isalpha(input[p])) {
+            if (j >= MAX_TOKEN_VALUE) {
+                *err = util_create_error(ERR_BOUNDARY, ERR_CRIT_ERROR, "too much input", "more input that internal data structure can handle.");
+                if (RET_ERR == util_check_error(*err) ) {
+                   break;
+                }
+            }
+            // TODO replace char to string method
+            char char_string[2]; // Reserve space for character + null terminator
+            char_string[0] = input[p];
+            char_string[1] = '\0';
+            util_concat_strings(&token_str, token_str, char_string);
+            //token.value[j++] = input[p++];
+            j++;
+            p++;
         }
-        token.value[j] = '\0';
+        // token.value[j] = '\0';
+        token.value = token_str;
         token.type = TOKEN_STRING;
     }
 
     // Check for numerical operands
     else if (isdigit(input[p])) {
         int j = 0;
-        while (j < MAX_TOKEN_VALUE && p < length && isdigit(input[p])) {
+        // TODO replace copy method!
+        while (j < MAX_TOKEN_VALUE && p < (int) length && isdigit(input[p])) {
             token.value[j++] = input[p++];
         }
         token.value[j] = '\0';
@@ -148,6 +203,20 @@ lexer_token lexer_next_token(char *input, int *line, int *pos) {
         token.type = TOKEN_UNKNOWN;
         token.value[0] = input[p];
         token.value[1] = '\0';
+        
+        char *err_msg = "";
+        char *str1 = "unknown character";
+        if (RET_ERR == util_create_error_message(&err_msg, str1, token.value) ) {
+            *err = util_create_error(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        
+        *err = util_create_error(ERR_LEXER, ERR_CRIT_WARN, err_msg, "character unknown. please verify your input.");
+        // util_print_error(*err);
+        /* TODO think about it, if we are returning directly here or later
+        if (RET_ERR == util_check_error(*err) ) {
+            return 
+        }
+        */
         p++;
     }
 

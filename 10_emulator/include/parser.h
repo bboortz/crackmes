@@ -28,19 +28,21 @@ typedef struct  cst_node{
     parser_cst_type type;
     int line;
     int pos;
-    char value[20];
+    char* value;
     struct cst_node* children;
     int num_children;
 } parser_cst_node;
 
 
-const char* parser_map_cst_type_to_string(parser_cst_type t);
-parser_cst_node parser_create_cst_node();
-parser_cst_node* parser_create_cst_node_arr(int size);
+// const char* parser_map_cst_type_to_string(parser_cst_type t);
+parser_cst_node parser_create_cst_node(error* err);
+parser_cst_node parser_create_cst_node_values(int line, int pos, parser_cst_type type, char* value, error* err);
+int parser_add_cst_node_to_cst_node(parser_cst_node* dst, parser_cst_node child, error* err);
+parser_cst_node* parser_create_cst_node_arr(int size, error* err);
 void parser_print_cst_node(parser_cst_node node);
-void parser_print_cst_node_arr(parser_cst_node *cst_token_arr);
-parser_cst_node* parser_process(lexer_token *cst_token_arr, int size);
-parser_cst_node parser_next_token(lexer_token *input_arr, int i);
+void parser_print_cst_node_arr(parser_cst_node* cst_token_arr);
+parser_cst_node* parser_process(lexer_token* cst_token_arr, int size, error* err);
+parser_cst_node parser_next_token(lexer_token* input_arr, int i, error* err);
 // parser_cst_node get_next_token(char *input, int *pos);
 
 

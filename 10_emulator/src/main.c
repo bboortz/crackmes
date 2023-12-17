@@ -24,7 +24,8 @@ int main(void) {
 
     printf("\n *** enjoy the crackme ***\n\n");
 
-    int result = scanner_scan_from_stdin();
+    error err = util_create_error_default();
+    int result = scanner_scan_from_stdin(&err);
 
     if (RET_ERR == result) {
         exit(EXIT_FAILURE);

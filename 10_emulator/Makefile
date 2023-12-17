@@ -24,7 +24,7 @@ OPTIMIZATION 	?= DEBUG
 CFLAGS_SPECIAL := # -fno-stack-protector -no-pie
 
 CFLAGS_ERROR = -Wall -Wextra -Wpedantic -Werror
-# -Wall 			- enables all errors
+# -Wall 		- enables all errors
 # -Wextra 		- enables some extra warning flags that are not enabled by -Wall
 # -Wpedantic 	- ensures strict ISO C
 # -Werror 		- makes all warnings into errors
@@ -35,23 +35,24 @@ CFLAGS_STD = -std=c17 -m64
 
 ifeq ($(strip $(OPTIMIZATION)), SIZE)
 CFLAGS_OPTIMIZATIONS = -Os -s -g0 -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-asynchronous-unwind-tables 
-# -Os 														- optimize for size
-# -s - remove all symbol table and relocation information from the executable
-# -g0 - no debugging information
-# -ffunction-sections 						- place each function or data item into its own section in the output file
-# -fdata-sections 								- place each function or data item into its own section 
-# -Wl,--gc-sections 							- remove unused sections which produce smaller statically linked executables
-# -fno-asynchronous-unwind-tables - generate unwind table in DWARF format which creates ~5% smaller results
+# -Os								- optimize for size
+# -s 								- remove all symbol table and relocation information from the executable
+# -g0 								- no debugging information
+# -ffunction-sections 				- place each function or data item into its own section in the output file
+# -fdata-sections 					- place each function or data item into its own section 
+# -Wl,--gc-sections 				- remove unused sections which produce smaller statically linked executables
+# -fno-asynchronous-unwind-tables 	- generate unwind table in DWARF format which creates ~5% smaller results
 # -fno-stack-protector 						- disable the gcc stack protection with canaries
  else ifeq ($(strip $(OPTIMIZATION)), DEBUG)
-CFLAGS_OPTIMIZATIONS = # -Og # -g 
-# -Og 														- optimize for good debugging experience
+CFLAGS_OPTIMIZATIONS = -Og -g 
+# -Og 		- optimize for good debugging experience
+# -g		- Produce debugging information in the operating system's native format
 else ifeq ($(strip $(OPTIMIZATION)), NO)
 CFLAGS_OPTIMIZATIONS = -O0
-# -O0 														- disable all optimizations
+# -O0 		- disable all optimizations
 else
 CFLAGS_OPTIMIZATIONS = -O2
-# -O2 														- optimization which does not negatively affect the speed
+# -O2 		- optimization which does not negatively affect the speed
 endif
 
 CFLAGS_NO_LINKER = -c
@@ -59,8 +60,8 @@ CFLAGS_NO_LINKER = -c
 
 ifeq ($(strip $(NOSTD)), 1)
 CFLAGS_STDLIB = -nostdlib -fno-stack-protector
-# -nostdlib - do not link the standard c library
-# -fno-stack-protector 						- disable compiler stack protection
+# -nostdlib 			- do not link the standard c library
+# -fno-stack-protector 	- disable compiler stack protection
 else
 CFLAGS_STDLIB = 
 endif
@@ -83,7 +84,8 @@ CFLAGS_TO_EXE = $(CFLAGS_ERROR) $(CFLAGS_STD) $(CFLAGS_OPTIMIZATIONS) $(CFLAGS_S
 #
 
 # define the C compiler to use
-CC = tests_include/afl/afl-gcc # gcc
+CC = gcc
+# CC = tests_include/afl/afl-gcc # gcc
 
 # tar
 TAR = tar
@@ -126,9 +128,11 @@ MD	:= mkdir
 else
 MAIN	:= crackme
 TESTMAIN	:= test
+TESTUTILS   := test_utils
 TESTSCANNER   := test_scanner
 TESTLEXER   := test_lexer
 TESTPARSER  := test_parser
+TESTINTERPRETER := test_interpreter
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
 TESTSOURCEDIRS	:= $(shell find $(TESTSRC) -type d)
 INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
@@ -171,10 +175,11 @@ TESTOBJECTSUNITY := tests_include/unity/CMakeFiles/unity.dir/src/unity.c.o
 
 OUTPUTMAIN			:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 TESTOUTPUTMAIN		:= $(call FIXPATH,$(OUTPUT)/$(TESTMAIN))
+TESTOUTPUTUTILS		:= $(call FIXPATH,$(OUTPUT)/$(TESTUTILS))
 TESTOUTPUTSCANNER	:= $(call FIXPATH,$(OUTPUT)/$(TESTSCANNER))
 TESTOUTPUTLEXER		:= $(call FIXPATH,$(OUTPUT)/$(TESTLEXER))
 TESTOUTPUTPARSER	:= $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
-
+TESTOUTPUTINTERPRETER := $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
 
 
 $(OUTPUT):
@@ -185,16 +190,22 @@ compileobjects: $(OBJECTS)
 
 compiletestobjects: compileobjects	
 
+$(TESTUTILS): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTUTILS) src/utils.o tests/test_utils.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
 $(TESTSCANNER): compiletestobjects 
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/utils.o src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTPARSER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/utils.o src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-$(TESTMAIN): compiletestobjects $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER)
+$(TESTINTERPRETER): compiletestobjects
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTMAIN): compiletestobjects $(TESTUTILS) $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER)
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 	@echo Tests compiled!
 
@@ -217,6 +228,7 @@ $(MAIN): compileobjects
 clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(TESTOUTPUTMAIN)
+	$(RM) $(TESTOUTPUTUTILS)
 	$(RM) $(TESTOUTPUTSCANNER)
 	$(RM) $(TESTOUTPUTLEXER)
 	$(RM) $(TESTOUTPUTPARSER)
