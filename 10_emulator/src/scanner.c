@@ -43,8 +43,7 @@ int scanner_scan_from_string(char *input, error *err) {
     char buffer[MAX_READ_BUFFER];
     interpreter_state state = interpreter_create_state();
 
-    int i = 0;
-    while(i < MAX_LINES) {
+    for(int i = 0; i < MAX_LINES; i++) {
         if (file == stdin) {
             printf("> ");    
         }
@@ -65,11 +64,10 @@ int scanner_scan_from_string(char *input, error *err) {
 
             // TODO fix it - loop necessary
             ///////// !!!!!!!!!
-            if (RET_ERR == interpreter_interpret_cst_node(cst_node_arr[i], &state, err) ) {
+            if (RET_ERR == interpreter_interpret_cst_node(cst_node_arr[0], &state, err) ) {
                 break;
             }
         }
-        i++;
     }
 
     return RET_SUCCESS;
