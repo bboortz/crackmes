@@ -1,9 +1,8 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef DERROR_H
+#define DERROR_H
 
 #include <stdio.h>
 #include <stdlib.h>
-
 
 #define RET_SUCCESS 0
 #define RET_ERR -1
@@ -43,18 +42,19 @@ typedef struct {
 } error;
 
 
+
+
 // const char* util_map_error_type_to_string(error_type t);
 // const char* util_map_error_criticality_to_string(error_criticality t);
-error util_create_error_default();
-error util_create_error(error_type err_code, error_criticality err_crit, const char* message, const char* cause);
-int util_create_error_message(char **dst, char* str1, char* str2);
-void util_print_error(error err);
-int util_check_error(error err);
-int util_create_string(char** dst);
-int util_copy_string(char** dst, char* str);
-int util_concat_strings(char** dst, char* str1, char* str2);
-int util_trim_string(char *str);
-int util_trim_string_from_newline(char *str);
+int error_destroy(error* err);
+error error_create_default();
+error error_create(error_type err_code, error_criticality err_crit, const char* message, const char* cause);
+
+//int error_create_message(string *dst, char* str1, char* str2, error* err);
+int error_create_message(char **dst, char* str1, char* str2, error* err);
+void error_print(error err);
+int error_check(error err);
+
 
 
 

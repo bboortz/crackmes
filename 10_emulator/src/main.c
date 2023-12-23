@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "utils.h"
+#include "cerror.h"
 #include "lexer.h"
 #include "parser.h"
 #include "scanner.h"
@@ -19,13 +19,21 @@ void ok(void) {
 
 
 
-int main(void) {
-
+int main(int argc, char **argv) {
 
     printf("\n *** enjoy the crackme ***\n\n");
 
-    error err = util_create_error_default();
-    int result = scanner_scan_from_stdin(&err);
+    printf("%d\n", argc);
+    printf("%s\n", argv[0]);
+
+    error err = error_create_default();
+    int result = RET_SUCCESS;
+
+    if (argc > 1) {
+        result = scanner_scan_from_filepath(argv[1], &err);
+    } else {
+        result = scanner_scan_from_stdin(&err);
+    }
 
     if (RET_ERR == result) {
         exit(EXIT_FAILURE);

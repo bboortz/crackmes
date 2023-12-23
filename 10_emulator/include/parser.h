@@ -1,9 +1,10 @@
 #ifndef PARSER_H
-#define PASSER_H
+#define PARSER_H
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "cerror.h"
 #include "lexer.h"
 
 

@@ -44,9 +44,10 @@ CFLAGS_OPTIMIZATIONS = -Os -s -g0 -ffunction-sections -fdata-sections -Wl,--gc-s
 # -fno-asynchronous-unwind-tables 	- generate unwind table in DWARF format which creates ~5% smaller results
 # -fno-stack-protector 						- disable the gcc stack protection with canaries
  else ifeq ($(strip $(OPTIMIZATION)), DEBUG)
-CFLAGS_OPTIMIZATIONS = -Og -g 
+CFLAGS_OPTIMIZATIONS = -Og -g -rdynamic 
 # -Og 		- optimize for good debugging experience
 # -g		- Produce debugging information in the operating system's native format
+# -rdynamic - This instructs the linker to add all symbols, not only used ones, to the dynamic symbol table. This option is needed for some uses of "dlopen" or to allow obtaining backtraces from within a program.
 else ifeq ($(strip $(OPTIMIZATION)), NO)
 CFLAGS_OPTIMIZATIONS = -O0
 # -O0 		- disable all optimizations
@@ -128,7 +129,11 @@ MD	:= mkdir
 else
 MAIN	:= crackme
 TESTMAIN	:= test
-TESTUTILS   := test_utils
+TESTSTACK   := test_stack
+TESTHEAP   := test_heap
+TESTERROR   := test_error
+TESTSTRING   := test_string
+TESTCCHARP   := test_ccharp
 TESTSCANNER   := test_scanner
 TESTLEXER   := test_lexer
 TESTPARSER  := test_parser
@@ -175,11 +180,15 @@ TESTOBJECTSUNITY := tests_include/unity/CMakeFiles/unity.dir/src/unity.c.o
 
 OUTPUTMAIN			:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 TESTOUTPUTMAIN		:= $(call FIXPATH,$(OUTPUT)/$(TESTMAIN))
-TESTOUTPUTUTILS		:= $(call FIXPATH,$(OUTPUT)/$(TESTUTILS))
+TESTOUTPUTSTACK		:= $(call FIXPATH,$(OUTPUT)/$(TESTSTACK))
+TESTOUTPUTHEAP		:= $(call FIXPATH,$(OUTPUT)/$(TESTHEAP))
+TESTOUTPUTERROR		:= $(call FIXPATH,$(OUTPUT)/$(TESTERROR))
+TESTOUTPUTSTRING		:= $(call FIXPATH,$(OUTPUT)/$(TESTSTRING))
+TESTOUTPUTCCHARP		:= $(call FIXPATH,$(OUTPUT)/$(TESTCCHARP))
 TESTOUTPUTSCANNER	:= $(call FIXPATH,$(OUTPUT)/$(TESTSCANNER))
 TESTOUTPUTLEXER		:= $(call FIXPATH,$(OUTPUT)/$(TESTLEXER))
 TESTOUTPUTPARSER	:= $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
-TESTOUTPUTINTERPRETER := $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
+TESTOUTPUTINTERPRETER := $(call FIXPATH,$(OUTPUT)/$(TESTINTERPRETER))
 
 
 $(OUTPUT):
@@ -190,23 +199,35 @@ compileobjects: $(OBJECTS)
 
 compiletestobjects: compileobjects	
 
-$(TESTUTILS): compiletestobjects 
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTUTILS) src/utils.o tests/test_utils.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+$(TESTSTACK): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSTACK) src/ccharp.o src/error.o src/heap.o src/stack.o tests/test_stack.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTHEAP): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTHEAP) src/ccharp.o src/error.o src/heap.o src/stack.o tests/test_heap.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTERROR): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTERROR) src/error.o src/heap.o src/stack.o src/ccharp.o tests/test_error.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTSTRING): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSTRING) src/error.o src/heap.o src/stack.o src/ccharp.o  src/string.o tests/test_string.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTCCHARP): compiletestobjects 
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCCHARP) src/ccharp.o src/error.o src/stack.o src/heap.o tests/test_ccharp.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTSCANNER): compiletestobjects 
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/utils.o src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTPARSER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/utils.o src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTINTERPRETER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o  src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-$(TESTMAIN): compiletestobjects $(TESTUTILS) $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER)
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/utils.o src/lexer.o src/parser.o src/scanner.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+$(TESTMAIN): compiletestobjects $(TESTSTACK) $(TESTHEAP) $(TESTERROR) $(TESTSTRING) $(TESTCCHARP) $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER) $(TESTINTERPRETER)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 	@echo Tests compiled!
 
 $(MAIN): compileobjects
@@ -228,14 +249,15 @@ $(MAIN): compileobjects
 clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(TESTOUTPUTMAIN)
-	$(RM) $(TESTOUTPUTUTILS)
+	$(RM) $(TESTOUTPUTSTACK)
+	$(RM) $(TESTOUTPUTHEAP)
+	$(RM) $(TESTOUTPUTERROR)
+	$(RM) $(TESTOUTPUTSTRING)
+	$(RM) $(TESTOUTPUTCCHARP)
 	$(RM) $(TESTOUTPUTSCANNER)
 	$(RM) $(TESTOUTPUTLEXER)
 	$(RM) $(TESTOUTPUTPARSER)
-	$(RM) $(TESTOUTPUTSCANNER)
-	$(RM) $(TESTOUTPUTLEXER)
-	$(RM) $(TESTOUTPUTPARSER)
-	$(RM) $(TESTOUTPUTMAIN)
+	$(RM) $(TESTOUTPUTINTERPRETER)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(TESTOBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))

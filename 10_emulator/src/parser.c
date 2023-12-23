@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "cerror.h"
+#include "cheap.h"
 #include "lexer.h"
 #include "parser.h"
+#include "ccharp.h"
 
 
 
@@ -41,12 +44,14 @@ parser_cst_node parser_create_cst_node_values(int line, int pos, parser_cst_type
     node.type = type;
     node.num_children = 0;
 
-    node.value = (char *)malloc((strlen(value) + 1) * sizeof(char));
+
+    size_t value_len = strlen(value) + 1;
+    node.value = (char*) heap_calloc(value_len, sizeof(char), err);
 
     if (node.value == NULL) {
-        *err = util_create_error(ERR_INTERNAL, ERR_CRIT_SEVERE, "Cannot allocation memory", "unclear, probably a programming mistake or unsifficient memory.");
+        *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "Cannot allocation memory", "unclear, probably a programming mistake or unsifficient memory.");
     }
-    util_copy_string(&node.value, value);
+    ccharp_copy_string(&node.value, value, err);
 
     return node;
 }
@@ -68,7 +73,8 @@ parser_cst_node* parser_create_cst_node_arr(int size, error* err) {
     } else if (0 == size) {
         size = 1;
     }
-    parser_cst_node* ast_token_arr = malloc(size * sizeof(parser_cst_node)); // Allocate memory for an array of structs
+
+    parser_cst_node* ast_token_arr = heap_calloc(size, sizeof(parser_cst_node), err);  // Allocate memory for an array of structs
 
     if (NULL != ast_token_arr) {
         // Initialize the structs in the array (for demonstration, using dummy data)
@@ -116,11 +122,11 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
     }
 
     parser_cst_node* cst_node_arr = parser_create_cst_node_arr(size, err);
-    if (RET_ERR == util_check_error(*err) ) {
+    if (RET_ERR == error_check(*err) ) {
         return cst_node_arr;
     }
     parser_cst_node cst_node = parser_create_cst_node(err);
-    if (RET_ERR == util_check_error(*err) ) {
+    if (RET_ERR == error_check(*err) ) {
         return cst_node_arr;
     }
 
@@ -129,19 +135,19 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
     while (size > i) {
         //lexer_print_token(cst_token_arr[i]);
         cst_node = parser_next_token(lexer_token_arr, i, err);
-        if (RET_ERR == util_check_error(*err) ) {
+        if (RET_ERR == error_check(*err) ) {
             break;
         }
 
         if (CST_INSTRUCTION == cst_node.type) {
             int found = 0;
             cst_node.children = parser_create_cst_node_arr(MAX_CST_NODE_CHILDREN, err);
-            if (RET_ERR == util_check_error(*err) ) {
+            if (RET_ERR == error_check(*err) ) {
                 break;
             }
             while (found < MAX_CST_NODE_CHILDREN) {
                 parser_cst_node cst_node_child = parser_next_token(lexer_token_arr, ++i, err);
-                if (RET_ERR == util_check_error(*err) ) {
+                if (RET_ERR == error_check(*err) ) {
                     break;
                 }
                 if (CST_IGNORE == cst_node_child.type) {
@@ -188,7 +194,7 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
 parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
     lexer_token input = input_arr[i];
     parser_cst_node token = parser_create_cst_node(err);
-    if (RET_ERR == util_check_error(*err) ) {
+    if (RET_ERR == error_check(*err) ) {
         return token;
     }
     token.line = input.line;
@@ -211,6 +217,7 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
     // Check for newline
     if (TOKEN_NEWLINE == input.type) {
         token.type = CST_IGNORE;
+        token.value = input.value;
         return token;
     } 
 
