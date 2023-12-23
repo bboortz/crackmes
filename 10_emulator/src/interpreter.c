@@ -93,7 +93,11 @@ int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* e
 
     cpu->ip++;
 
-    printf("\n *** ip: %d - reg_a: %d\n", cpu->ip, cpu->reg_a);
+    interpreter_print_state(cpu);
 
     return RET_SUCCESS;
+}
+
+void interpreter_print_state(cpu_6502* cpu) {
+    cpu_6502_print_state(cpu);
 }

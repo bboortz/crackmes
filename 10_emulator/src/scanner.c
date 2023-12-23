@@ -44,6 +44,7 @@ int scanner_scan_from_string(char *input, error *err) {
     char buffer[MAX_READ_BUFFER];
     //interpreter_state state = interpreter_create_state();
     cpu_6502 cpu = cpu_6502_create();
+    interpreter_print_state(&cpu);
 
     for(int i = 0; i < MAX_LINES; i++) {
         if (file == stdin) {
