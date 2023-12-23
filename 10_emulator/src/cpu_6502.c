@@ -5,23 +5,41 @@
 #include "interpreter.h"
 #include "parser.h"
 #include "ccharp.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "cpu_6502.h"
 
 
-/*
-interpreter_state interpreter_create_state() {
-    interpreter_state state = {0};
 
-    state.ip = 0;
-    state.reg_a = 0;
-    state.err = error_create_default();
+cpu_6502 cpu_6502_create() {
+    cpu_6502 cpu = {0};
 
-    return state;
+    cpu_6502_reset(&cpu);
+
+    return cpu;
 }
-*/
 
-/*
-int interpreter_interpret_instruction_mov(parser_cst_node node, interpreter_state* state, error* err) {
+
+int cpu_6502_destroy(cpu_6502* cpu) {
+    return cpu_6502_reset(cpu);
+}
+
+int cpu_6502_reset(cpu_6502* cpu) {
+    cpu->ip = 0xFFFC;
+    cpu->sp = 0x0100;
+    cpu->reg_a = 0;
+    cpu->reg_x = 0;
+    cpu->reg_y = 0;
+
+    return RET_SUCCESS;
+}
+
+
+
+int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err) {
     parser_print_cst_node(node);
     error_print(*err);
 
@@ -35,14 +53,14 @@ int interpreter_interpret_instruction_mov(parser_cst_node node, interpreter_stat
     if (RET_ERR == ccharp_string_to_int(&number, node.children[1].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
-    state->reg_a = number; // atoi(node.children[2].value);
+    cpu->reg_a = number; // atoi(node.children[2].value);
 
     return RET_SUCCESS;
 }
 
 
 
-int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* state, error* err) {
+int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
     parser_print_cst_node(node);
     error_print(*err);
     
@@ -53,7 +71,7 @@ int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* s
     printf("Instruction: %s\n", instruction);
     if (strncmp(instruction, "MOV", instruction_len) == 0) {
         printf("MOV instruction\n");
-        interpreter_interpret_instruction_mov(node, state, err);
+        cpu_6502_interpret_instruction_mov(node, cpu, err);
     } else {
         char *err_msg = "";
         char *str1 = "unknown instruction";
@@ -63,37 +81,6 @@ int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* s
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
         return RET_ERR;
     }
-
-    return RET_SUCCESS;
-}
-*/
-
-//int interpreter_interpret_cst_node(parser_cst_node node, interpreter_state* state, error* err) {
-int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* err) {
-
-    printf("------------\n");
-    parser_print_cst_node(node);
-    error_print(*err);
-    printf("------------\n");
-    switch (node.type) {
-        case CST_INSTRUCTION:
-            cpu_6502_interpret_instruction(node, cpu, err);
-            break;
-        case CST_END_OF_INPUT:
-            printf("End of input\n");
-            break;
-        case CST_UNKNOWN:
-            printf("Unknown token\n");
-            break;
-        default:
-            printf("completely Unknown token\n");
-            break;
-
-    }
-
-    cpu->ip++;
-
-    printf("\n *** ip: %d - reg_a: %d\n", cpu->ip, cpu->reg_a);
 
     return RET_SUCCESS;
 }

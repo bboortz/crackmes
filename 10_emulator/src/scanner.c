@@ -6,6 +6,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "interpreter.h"
+#include "cpu_6502.h"
 
 
 
@@ -41,7 +42,8 @@ int scanner_scan_from_string(char *input, error *err) {
     }  
 
     char buffer[MAX_READ_BUFFER];
-    interpreter_state state = interpreter_create_state();
+    //interpreter_state state = interpreter_create_state();
+    cpu_6502 cpu = cpu_6502_create();
 
     for(int i = 0; i < MAX_LINES; i++) {
         if (file == stdin) {
@@ -64,7 +66,7 @@ int scanner_scan_from_string(char *input, error *err) {
 
             // TODO fix it - loop necessary
             ///////// !!!!!!!!!
-            if (RET_ERR == interpreter_interpret_cst_node(cst_node_arr[0], &state, err) ) {
+            if (RET_ERR == interpreter_interpret_cst_node(cst_node_arr[0], &cpu, err) ) {
                 break;
             }
         }

@@ -137,6 +137,7 @@ TESTCCHARP   := test_ccharp
 TESTSCANNER   := test_scanner
 TESTLEXER   := test_lexer
 TESTPARSER  := test_parser
+TESTCPU65202 := test_cpu_6502
 TESTINTERPRETER := test_interpreter
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
 TESTSOURCEDIRS	:= $(shell find $(TESTSRC) -type d)
@@ -188,6 +189,7 @@ TESTOUTPUTCCHARP		:= $(call FIXPATH,$(OUTPUT)/$(TESTCCHARP))
 TESTOUTPUTSCANNER	:= $(call FIXPATH,$(OUTPUT)/$(TESTSCANNER))
 TESTOUTPUTLEXER		:= $(call FIXPATH,$(OUTPUT)/$(TESTLEXER))
 TESTOUTPUTPARSER	:= $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
+TESTOUTPUTCPU6502   := $(call FIXPATH,$(OUTPUT)/$(TESTCPU65202))
 TESTOUTPUTINTERPRETER := $(call FIXPATH,$(OUTPUT)/$(TESTINTERPRETER))
 
 
@@ -215,7 +217,7 @@ $(TESTCCHARP): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCCHARP) src/ccharp.o src/error.o src/stack.o src/heap.o tests/test_ccharp.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTSCANNER): compiletestobjects 
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
@@ -223,11 +225,14 @@ $(TESTLEXER): compiletestobjects
 $(TESTPARSER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-$(TESTINTERPRETER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o  src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+$(TESTCPU65202): compiletestobjects
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCPU6502) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/cpu_6502.o src/parser.o tests/test_cpu_6502.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-$(TESTMAIN): compiletestobjects $(TESTSTACK) $(TESTHEAP) $(TESTERROR) $(TESTSTRING) $(TESTCCHARP) $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER) $(TESTINTERPRETER)
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+$(TESTINTERPRETER): compiletestobjects
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o  src/lexer.o src/parser.o src/scanner.o src/cpu_6502.o src/interpreter.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTMAIN): compiletestobjects $(TESTSTACK) $(TESTHEAP) $(TESTERROR) $(TESTSTRING) $(TESTCCHARP) $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER) $(TESTCPU65202) $(TESTINTERPRETER)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o  tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 	@echo Tests compiled!
 
 $(MAIN): compileobjects
@@ -257,6 +262,7 @@ clean:
 	$(RM) $(TESTOUTPUTSCANNER)
 	$(RM) $(TESTOUTPUTLEXER)
 	$(RM) $(TESTOUTPUTPARSER)
+	$(RM) $(TESTOUTPUTCPU6502)
 	$(RM) $(TESTOUTPUTINTERPRETER)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(TESTOBJECTS))

@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "interpreter.h"
 #include "cerror.h"
+#include "cpu_6502.h"
 
 
 
@@ -66,13 +67,13 @@ void test_interpreter_interpret_cst_node_simple_pos(void) {
     error err = error_create_default();
     lexer_token* lexer_token_arr = lexer_process_string(input, &err);
     parser_cst_node *cst_node_arr = parser_process(lexer_token_arr, MAX_CST_NODES, &err);
-    interpreter_state state = interpreter_create_state();
+    cpu_6502 cpu = cpu_6502_create();
 
     int i = 0;
     while (MAX_CST_NODES > i) {
         // error exp_err = error_create(test_error_types[i], test_error_crits[i], test_error_messages[i], test_error_causes[i]);
 
-        int result = interpreter_interpret_cst_node(cst_node_arr[i], &state, &err);
+        int result = interpreter_interpret_cst_node(cst_node_arr[i], &cpu, &err);
         TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);    
         
         if (CST_END_OF_INPUT == cst_node_arr[i].type) {
@@ -82,9 +83,9 @@ void test_interpreter_interpret_cst_node_simple_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(2, state.ip);
-    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, state.err.code);
-    TEST_ASSERT_EQUAL_INT(42, state.reg_a);
+    TEST_ASSERT_EQUAL_INT(65534, cpu.ip);
+    // TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, cpu.err.code);
+    TEST_ASSERT_EQUAL_INT(42, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(1, i);
 
 
