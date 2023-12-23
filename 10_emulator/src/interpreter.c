@@ -42,15 +42,19 @@ int interpreter_interpret_instruction_mov(parser_cst_node node, interpreter_stat
 int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* state, error* err) {
     parser_print_cst_node(node);
     error_print(*err);
+    
+    ccharp_toupper_string(node.value);
+    char *instruction = node.value;
+    size_t instruction_len = strlen(instruction);
 
-    printf("Instruction: %s\n", node.value);
-    if (strncmp(node.value, "MOV", strlen("option1")) == 0) {
+    printf("Instruction: %s\n", instruction);
+    if (strncmp(instruction, "MOV", instruction_len) == 0) {
         printf("MOV instruction\n");
         interpreter_interpret_instruction_mov(node, state, err);
     } else {
         char *err_msg = "";
         char *str1 = "unknown instruction";
-        if (RET_ERR == error_create_message(&err_msg, str1, node.value, err) ) {
+        if (RET_ERR == error_create_message(&err_msg, str1, instruction, err) ) {
             *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
         }
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");

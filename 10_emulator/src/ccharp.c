@@ -123,6 +123,14 @@ int ccharp_copy_substring_as_long_as_digit(char** dst, char* src, error* err) {
 
 
 
+void ccharp_toupper_string(char *str) {
+    while (*str) {
+        *str = toupper((unsigned char)*str);
+        str++;
+    }
+}
+
+
 int ccharp_trim_string(char *str) {
     int start = 0, end = strlen(str) - 1;
 

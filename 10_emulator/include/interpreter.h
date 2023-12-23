@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "parser.h"
 #include "cerror.h"
 
@@ -12,8 +13,10 @@
 // concrete syntax tree (CST) token struct
 typedef struct {
     parser_cst_type type;
-    int ip;
-    int reg_a;
+    uint16_t ip;
+    unsigned char reg_a;
+    
+    uint8_t status;
     error err;
 } interpreter_state;
 
