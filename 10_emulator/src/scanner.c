@@ -53,7 +53,10 @@ int scanner_scan_from_string(char *input, error *err) {
         
         if (fgets(buffer, sizeof(buffer), file) != NULL) {
             ccharp_trim_string(buffer);
-            printf("< %s\n", buffer);
+            if (file != stdin) {
+                printf("< %s\n", buffer);  
+            }
+            
             lexer_token *lexer_token_arr = lexer_process_string(buffer, err);
             if (RET_ERR == error_check(*err) ) {
                 break;
@@ -62,7 +65,7 @@ int scanner_scan_from_string(char *input, error *err) {
             if (RET_ERR == error_check(*err) ) {
                 break;
             }
-            parser_print_cst_node_arr(cst_node_arr);
+            //parser_print_cst_node_arr(cst_node_arr);
 
 
             // TODO fix it - loop necessary

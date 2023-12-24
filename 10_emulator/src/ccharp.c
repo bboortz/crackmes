@@ -92,7 +92,7 @@ int ccharp_copy_substring_as_long_as_char(char** dst, char* src, error* err) {
         dst_len++;
         src++;
     }
-    printf("%ld\n", dst_len);
+    //printf("%ld\n", dst_len);
 
     return ccharp_copy_substring(dst, src_begin, 0, dst_len, err);
 }
@@ -116,7 +116,7 @@ int ccharp_copy_substring_as_long_as_digit(char** dst, char* src, error* err) {
         dst_len++;
         src++;
     }
-    printf("%ld\n", dst_len);
+    //printf("%ld\n", dst_len);
 
     return ccharp_copy_substring(dst, src_begin, 0, dst_len, err);
 }

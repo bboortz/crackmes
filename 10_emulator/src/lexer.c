@@ -108,9 +108,9 @@ int lexer_destroy_token_arr(lexer_token* token_arr, error *err) {
     }
         
     for(int i = 0; i < MAX_TOKEN_NODES; i++) {
-        printf("i %d\n", i);
-        void* ptr = &token_arr[i];
-        printf("lalala: %d - %d - %p\n", i, MAX_TOKEN_NODES, ptr );
+        //printf("i %d\n", i);
+        //void* ptr = &token_arr[i];
+        //printf("lalala: %d - %d - %p\n", i, MAX_TOKEN_NODES, ptr );
         // heap_free( (void*)token_arr[i]->value, err);
         lexer_print_token(token_arr[i]);
         lexer_destroy_token(&token_arr[i], err);
@@ -129,26 +129,26 @@ lexer_token* lexer_create_token_arr(int size, error* err) {
         size = 1;
     }
 
-    printf("lalala+: %d\n", size);
+    //printf("lalala+: %d\n", size);
     lexer_token* cst_token_arr = heap_calloc(size, sizeof(lexer_token), err);
-    printf("lalala\n");
+    //printf("lalala\n");
     //lexer_token* cst_token_arr = util_malloc(size * sizeof(lexer_token), err); // Allocate memory for an array of structs
 
     if (NULL != cst_token_arr) {
     }
         
     for (int i = 0; i < size && i < MAX_TOKEN_NODES; i++) {
-        void* ptr = &cst_token_arr[i];
-        printf("lalala: %d - %d - %p\n", i, size, ptr );
+        //void* ptr = &cst_token_arr[i];
+        //printf("lalala: %d - %d - %p\n", i, size, ptr );
         cst_token_arr[i] = lexer_create_token(err);
         //error_print(*err);
         //printf("alalala: %d - %d\n", i, size);
         if (NULL != err && RET_ERR == error_check(*err) ) {
-            printf("BOOOOOM: %d - %d\n", i, size);
+            //printf("BOOOOOM: %d - %d\n", i, size);
             continue;
         }
         //error_destroy(err);
-        printf("yes: %d - %d\n", i, size);
+        //printf("yes: %d - %d\n", i, size);
     }
 
     return cst_token_arr;
@@ -168,11 +168,11 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
     token.pos = p;
 
 
-    printf("# %d - %ld - <%s>\n", p, length, input);
+    //printf("# %d - %ld - <%s>\n", p, length, input);
 
     // Check for newline
     if ('\n' == input[p] ) {
-        printf("newline\n");
+        //printf("newline\n");
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring(&token.value, input, 0, 1, err);
@@ -197,16 +197,16 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
 
     // Skip whitespace
     while (p < (int) length && isspace(input[p])) {
-        printf("white\n");
+        //printf("white\n");
         token.pos++;
         p++;
     }
 
-    printf("# %d - %ld - <%s>\n", p, length, input);
+    //printf("# %d - %ld - <%s>\n", p, length, input);
 
     // Check for end of input
     if (p == (int) length) {
-        printf("end......\n");
+        //printf("end......\n");
         token.type = TOKEN_END_OF_INPUT;
         *err = error_create_default();
         //*pos = p;
@@ -214,13 +214,13 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
     
     // Check for comma (,)
     } else if (',' == input[p]) {
-        printf("-# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
+        //printf("-# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring(&token.value, input, 0, 1, err);
         token.type = TOKEN_COMMA;
-        printf("-# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
+        //printf("-# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         *err = error_create_default();
 /*
         token.value[0] = input[p++];
@@ -231,7 +231,7 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
     
     // Check for strings
     } else if (isalpha(input[p])) {
-        printf("## %d\n", *pos);
+        //printf("## %d\n", *pos);
 
         heap_free(token.value, err);
         input += p;
@@ -282,7 +282,7 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
 
     // Check for numerical operands
     } else if (isdigit(input[p])) {
-        printf("## %d\n", *pos);
+        //printf("## %d\n", *pos);
 
         heap_free(token.value, err);
         input += p;
@@ -302,14 +302,14 @@ lexer_token lexer_next_token(char *input, int *line, int *pos, error* err) {
 
     // unknown
     } else {
-        printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
+        //printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         
         
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring(&token.value, input, 0, 1, err);
         token.type = TOKEN_UNKNOWN;
-        printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
+        //printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         
         char *err_msg;
         char *str1 = "unknown character";
@@ -348,35 +348,35 @@ lexer_token* lexer_process_string(char *input, error *err) {
     error_destroy(&e);
 
 
-    printf("########### before ########>>>>>\n");
+    //printf("########### before ########>>>>>\n");
     int i = 0;
     while (MAX_TOKEN_NODES > i) {
-        printf("########### %d ########>>>>>\n", i);
-        error_print(*err);
+        //printf("########### %d ########>>>>>\n", i);
+        //error_print(*err);
         e = error_create_default();
         if (0 == i) {
             *err = e;
         }
         cst_token_arr[i] = lexer_next_token(input, &pos, &line, &e);
         //lexer_print_token(cst_token_arr[i]);
-        printf("-------------->>\n");
-        error_print(e);
-        printf("--------------\n");
+        //printf("-------------->>\n");
+        //error_print(e);
+        //printf("--------------\n");
         if (e.code != ERR_SUCCESS) {
-            printf("-------------- err\n");
+            //printf("-------------- err\n");
             *err = e;
-            error_print(*err);
+            //error_print(*err);
             i++;
             continue;
 
         } 
         
         if (RET_ERR == error_check(e) ) {
-            printf("-------------- break\n");
+            //printf("-------------- break\n");
             error_destroy(&e);
             break;
         }
-        printf("--------------\n");
+        //printf("--------------\n");
         
         if (TOKEN_END_OF_INPUT == cst_token_arr[i].type) {
             error_destroy(&e);
@@ -384,13 +384,13 @@ lexer_token* lexer_process_string(char *input, error *err) {
         }
 
         i++;
-        printf("<<--------------\n");
+        //printf("<<--------------\n");
         
         //error_destroy(&e);
     }
 
-    printf("<<<<<<<########### %d ########\n", i);
-    error_print(*err);
+    //printf("<<<<<<<########### %d ########\n", i);
+    //error_print(*err);
 
     return cst_token_arr;
 }

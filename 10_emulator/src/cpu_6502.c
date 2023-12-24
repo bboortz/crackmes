@@ -74,13 +74,13 @@ char* get_binary(unsigned char byte) {
 void cpu_6502_print_state(cpu_6502* cpu) {
     char* ps_binary = get_binary(cpu->ps);
     printf("\n *** CPU { ip: %d, reg_a: %d, reg_x: %d, reg_y: %d, ps: %s (%d) } \n", cpu->ip, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
-    print_binary(cpu->ps);
+    //print_binary(cpu->ps);
 
 }
 
 
 int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err) {
-    printf("MOV instruction\n");
+    // printf("MOV instruction\n");
     //parser_print_cst_node(node);
     //error_print(*err);
 
@@ -99,7 +99,7 @@ int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, error* err) {
-    printf("LDA instruction\n");
+    //printf("LDA instruction\n");
     //parser_print_cst_node(node);
     //error_print(*err);
 
@@ -120,14 +120,14 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
 
 
 int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
-    parser_print_cst_node(node);
+    //parser_print_cst_node(node);
     //error_print(*err);
     
     ccharp_toupper_string(node.value);
     char *instruction = node.value;
     size_t instruction_len = strlen(instruction);
 
-    //printf("Instruction: %s\n", instruction);
+    printf("Instruction: %s\n", instruction);
     if (strncmp(instruction, "MOV", instruction_len) == 0) {
         
         cpu_6502_interpret_instruction_mov(node, cpu, err);

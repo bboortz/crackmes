@@ -71,10 +71,10 @@ int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* s
 //int interpreter_interpret_cst_node(parser_cst_node node, interpreter_state* state, error* err) {
 int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* err) {
 
-    printf("------------\n");
-    parser_print_cst_node(node);
-    error_print(*err);
-    printf("------------\n");
+    //printf("------------\n");
+    //parser_print_cst_node(node);
+    //error_print(*err);
+    //printf("------------\n");
     switch (node.type) {
         case CST_INSTRUCTION:
             cpu_6502_interpret_instruction(node, cpu, err);

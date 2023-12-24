@@ -61,9 +61,9 @@ char* stack_get_caller(error* err) {
     size_t str_len = strlen(strace.symbols[n]) + 1;
 
     char* ret;
-    printf("i: %d\n", nn);
+    //printf("i: %d\n", nn);
     if (0 == nn ) {
-        printf("******* %d\n", nn);
+        //printf("******* %d\n", nn);
         nn++;
         ret = (char *)heap_calloc(str_len, sizeof(char), err);
         

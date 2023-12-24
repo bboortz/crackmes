@@ -21,10 +21,7 @@ void ok(void) {
 
 int main(int argc, char **argv) {
 
-    printf("\n *** enjoy the crackme ***\n\n");
-
-    printf("%d\n", argc);
-    printf("%s\n", argv[0]);
+    printf("\n *** enjoy the 6502 assembly crackme ***\n\n");
 
     error err = error_create_default();
     int result = RET_SUCCESS;
