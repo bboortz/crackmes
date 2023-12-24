@@ -30,6 +30,9 @@ int cpu_6502_destroy(cpu_6502* cpu) {
     return cpu_6502_reset(cpu);
 }
 
+
+
+
 int cpu_6502_reset(cpu_6502* cpu) {
     cpu->type = CPU_TYPE_6502;
     cpu->ip = 0xFFFC;
@@ -73,33 +76,151 @@ char* get_binary(unsigned char byte) {
     return binary;
 }
 
+void set_bit(unsigned char *ch, int position, int bit) {
+    if (position < 0 || position > 7) {
+        printf("Invalid position. Position should be between 0 and 7.\n");
+        return;
+    }
+
+    if (bit != 0 && bit != 1) {
+        printf("Invalid bit value. Bit should be either 0 or 1.\n");
+        return;
+    }
+
+    unsigned char mask = 1 << position; // Create a mask for the bit position
+    if (bit == 1) {
+        *ch |= mask; // Set the bit at the given position to 1
+    } else {
+        *ch &= ~mask; // Set the bit at the given position to 0
+    }
+}
+
+
+int get_bit(unsigned char ch, int position) {
+    if (position < 0 || position > 7) {
+        printf("Invalid position. Position should be between 0 and 7.\n");
+        return -1;
+    }
+
+    unsigned char mask = 1 << position; // Create a mask for the bit position
+    int bit_value = (ch & mask) ? 1 : 0;
+    return bit_value;
+}
+
+
 
 void cpu_6502_print_state(cpu_6502* cpu) {
     char* ps_binary = get_binary(cpu->ps);
-    printf("\n *** CPU { ip: %d, reg_a: %d, reg_x: %d, reg_y: %d, ps: %s (%d) } \n", cpu->ip, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
-    //print_binary(cpu->ps);
-
+    printf("\n Registers |    IP |    SP |   A |   X |   Y | PS: NO-BDIZC       |\n");
+    printf("           | %5d | %5d | %3d | %3d | %3d |     %8s (%3d) | \n", cpu->ip, cpu->sp, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
+    printf(" MEM       |   .................................................  |\n");
+//    printf("\n *** CPU { ip: %5d, reg_a: %3d, reg_x: %3d, reg_y: %3d, ps: %8s (%3d) } \n", cpu->ip, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
+    free(ps_binary);
 }
 
 
-int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err) {
-    // printf("MOV instruction\n");
-    //parser_print_cst_node(node);
-    //error_print(*err);
 
-    if (2 != node.num_children) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction MOV needs 2 parameter", "wrong number of parameters.");
-    }
 
-    int number = 0;
-    //printf("-> %s\n", node.children[1].value);
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[1].value) ) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit) {
+
+    switch (flag) {
+        case 'C': // carry flag
+            set_bit(&cpu->ps, 0, bit);
+            return;
+
+        case 'Z':  // zero flag
+            set_bit(&cpu->ps, 1, bit);
+            return;
+
+        case 'I': // interrupt disable flag
+            set_bit(&cpu->ps, 2, bit);
+            return;
+        
+        case 'D': // decimal mode flag
+            set_bit(&cpu->ps, 3, bit);
+            return;
+
+        case 'B': // break command flag
+            set_bit(&cpu->ps, 4, bit);
+            return;
+
+        case 'V': // overflow flag
+            set_bit(&cpu->ps, 6, bit);
+            return;
+
+        case 'N': // negative flag
+            set_bit(&cpu->ps, 7, bit);
+            return;
+
+        default:
+            // TODO 
+            // use error err
+            printf("Unknown flag\n");
+/*
+            char *err_msg = "";
+            char *str1 = "unknown status flag";
+            if (RET_ERR == error_create_message(&err_msg, str1, flag, err) ) {
+                *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+            }
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
+            */
+            return;
     }
-    cpu->reg_a = number; // atoi(node.children[2].value);
+}
+
+
+int cpu_6502_get_status_flag(cpu_6502* cpu, char flag) {
+
+    switch (flag) {
+        case 'C': // carry flag
+            return get_bit(cpu->ps, 0);
+
+        case 'Z':  // zero flag
+            return get_bit(cpu->ps, 1);
+
+        case 'I': // interrupt disable flag
+            return get_bit(cpu->ps, 2);
+        
+        case 'D': // decimal mode flag
+            return get_bit(cpu->ps, 3);
+
+        case 'B': // break command flag
+            return get_bit(cpu->ps, 4);
+
+        case 'V': // overflow flag
+            return get_bit(cpu->ps, 6);
+
+        case 'N': // negative flag
+            return get_bit(cpu->ps, 7);
+
+        default:
+            // TODO 
+            // use error err
+            printf("Unknown flag\n");
+/*
+            char *err_msg = "";
+            char *str1 = "unknown status flag";
+            if (RET_ERR == error_create_message(&err_msg, str1, flag, err) ) {
+                *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+            }
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
+            */
+            return 0;
+    }
+}
+
+
+
+
+
+int cpu_6502_interpret_instruction_nop(parser_cst_node node, error* err) {
+     if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 0 parameter", "wrong number of parameters.");
+    }
 
     return RET_SUCCESS;
 }
+
 
 int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, error* err) {
      if (1 != node.num_children) {
@@ -111,6 +232,9 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_a = number;
+
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
+    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
 
     return RET_SUCCESS;
 }
@@ -126,6 +250,9 @@ int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_x = number;
 
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
+    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
+
     return RET_SUCCESS;
 }
 
@@ -139,6 +266,9 @@ int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, erro
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_y = number;
+
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
+    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
 
     return RET_SUCCESS;
 }
@@ -154,8 +284,8 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
     size_t instruction_len = strlen(instruction);
 
     printf("Instruction: %s\n", instruction);
-    if (strncmp(instruction, "MOV", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_mov(node, cpu, err);
+    if (strncmp(instruction, "NOP", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_nop(node, err);
     
     } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
         cpu_6502_interpret_instruction_lda(node, cpu, err);
@@ -357,3 +487,25 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
     
     return token;
 }
+
+
+/*
+int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err) {
+    // printf("MOV instruction\n");
+    //parser_print_cst_node(node);
+    //error_print(*err);
+
+    if (2 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction MOV needs 2 parameter", "wrong number of parameters.");
+    }
+
+    int number = 0;
+    //printf("-> %s\n", node.children[1].value);
+    if (RET_ERR == ccharp_string_to_int(&number, node.children[1].value) ) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+    }
+    cpu->reg_a = number; // atoi(node.children[2].value);
+
+    return RET_SUCCESS;
+}
+*/
