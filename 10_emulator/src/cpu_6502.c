@@ -102,20 +102,43 @@ int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, error* err) {
-    //printf("LDA instruction\n");
-    //parser_print_cst_node(node);
-    //error_print(*err);
+     if (1 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
+    }
 
+    int number = 0;
+    if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+    }
+    cpu->reg_a = number;
+
+    return RET_SUCCESS;
+}
+
+int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, error* err) {
     if (1 != node.num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    //printf("-> %s\n", node.children[0].value);
     if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
-    cpu->reg_a = number; // atoi(node.children[2].value);
+    cpu->reg_x = number;
+
+    return RET_SUCCESS;
+}
+
+int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (1 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
+    }
+
+    int number = 0;
+    if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+    }
+    cpu->reg_y = number;
 
     return RET_SUCCESS;
 }
@@ -132,12 +155,16 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
 
     printf("Instruction: %s\n", instruction);
     if (strncmp(instruction, "MOV", instruction_len) == 0) {
-        
         cpu_6502_interpret_instruction_mov(node, cpu, err);
     
     } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
-        
         cpu_6502_interpret_instruction_lda(node, cpu, err);
+
+    } else if (strncmp(instruction, "LDX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ldx(node, cpu, err);
+
+    } else if (strncmp(instruction, "LDY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ldy(node, cpu, err);
 
     } else {
         char *err_msg = "";

@@ -33,7 +33,10 @@ string
         
 
 # Ref
-* https://github.com/bboortz/crackmes/tree/main/08_buffer_overflow
+* https://sta.c64.org/cbm64mem.html
+* http://www.6502.org/users/obelisk/
+* https://www.c64-wiki.com/wiki/Assembler
+* 
 
 
 # Memory
