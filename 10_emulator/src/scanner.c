@@ -74,6 +74,9 @@ int scanner_scan_from_string(char *input, error *err) {
                 break;
             }
         }
+
+        // TODO 
+        // ctrl-d catch necessary
     }
 
     return RET_SUCCESS;

@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "ccharp.h"
 #include "cpu_6502.h"
+#include "cpu.h"
 
 
 /*
@@ -77,7 +78,7 @@ int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* e
     //printf("------------\n");
     switch (node.type) {
         case CST_INSTRUCTION:
-            cpu_6502_interpret_instruction(node, cpu, err);
+            cpu_current_interpret_instruction(node, cpu, err);
             break;
         case CST_END_OF_INPUT:
             printf("End of input\n");

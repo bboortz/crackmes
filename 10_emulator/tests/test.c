@@ -26,7 +26,7 @@ void tearDown() {
 void test_scanner_scan_from_stdin(void) {
     printf("\n*** test_scanner_scan_from_stdin ***\n");
     
-    error err = error_create_default();
+    error err;
     int result = scanner_scan_from_stdin(&err);
 
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);
@@ -42,8 +42,9 @@ int main(void) {
     printf("\n\n****** tests ****************************\n");
     RUN_TEST( test_scanner_scan_from_stdin );
 
-    error err = error_create_default();
-    heap_check(&err);
+    heap_print_stat();
+    // error err;
+    // heap_check(&err);
 
     return (UnityEnd());
 }

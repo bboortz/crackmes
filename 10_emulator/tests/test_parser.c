@@ -6,6 +6,9 @@
 #include "lexer.h"
 #include "parser.h"
 #include "cerror.h"
+#include "cpu.h"
+#include "cpu_6502.h"
+
 
 
 
@@ -73,7 +76,7 @@ void test_parser_next_token_simple_pos(void) {
     parser_cst_node exp_ast_token = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "MOV", &err);
     parser_cst_node ast_token = parser_create_cst_node(&err);
 
-    lexer_token_arr[0] = lexer_next_token(input, &pos, &line, &err);
+    lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
     ast_token = parser_next_token(lexer_token_arr, 0, &err);
@@ -97,7 +100,7 @@ void test_parser_next_token_simple_neg(void) {
     parser_cst_node exp_ast_token = parser_create_cst_node_values(0, 0, CST_UNKNOWN, ":", &err);
     parser_cst_node ast_token = parser_create_cst_node(&err);
 
-    lexer_token_arr[0] = lexer_next_token(input, &pos, &line, &err);
+    lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
     ast_token = parser_next_token(lexer_token_arr, 0, &err);
@@ -119,7 +122,7 @@ void test_parser_next_token_simple_neg2(void) {
     parser_cst_node ast_token = parser_create_cst_node(&err);
 
 
-    //lexer_token_arr[0] = lexer_next_token(input, &pos, &line, &err);
+    //lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     lexer_token* lexer_token_arr = lexer_process_string(input, &err);
     lexer_print_token_arr(lexer_token_arr);
     lexer_print_token(lexer_token_arr[0]);

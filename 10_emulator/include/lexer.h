@@ -41,7 +41,7 @@ lexer_token lexer_create_token_values(int line, int pos, lexer_token_type type, 
 int lexer_destroy_token_arr(lexer_token *token, error *err);
 lexer_token* lexer_create_token_arr(int size, error* err);
 
-lexer_token lexer_next_token(char* input, int* pos, int* line, error* err);
+// lexer_token lexer_next_token(char* input, int* pos, int* line, error* err);
 
 lexer_token* lexer_process_string(char* input, error* err);
 

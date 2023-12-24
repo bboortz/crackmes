@@ -21,7 +21,9 @@ void ok(void) {
 
 int main(int argc, char **argv) {
 
-    printf("\n *** enjoy the 6502 assembly crackme ***\n\n");
+    printf("\n *** enjoy the 6502 assembly crackme ***\n");
+    printf(" exit with ctrl-c\n");
+    printf("\n");
 
     error err = error_create_default();
     int result = RET_SUCCESS;

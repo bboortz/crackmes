@@ -1,4 +1,4 @@
-MOV a, 42
-MOV b, 5
-ADD a, b
-SUB a, 23
+LDA 1
+LDA 5
+LDA 99
+LDA 100

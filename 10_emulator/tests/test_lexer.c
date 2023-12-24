@@ -5,6 +5,8 @@
 #include "cerror.h"
 #include "cheap.h"
 #include "lexer.h"
+#include "cpu.h"
+#include "cpu_6502.h"
 
 
 
@@ -36,8 +38,8 @@ void verify_token(lexer_token exp_token, error exp_err, lexer_token token, error
 }
 
 
-void test_lexer_next_token_simple_pos(void) {
-    printf("\n*** test_lexer_next_token_simple_pos ***\n");
+void test_cpu_current_lexer_next_token_simple_pos(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos ***\n");
 
     char input[] = "";
     int line = 0;
@@ -48,7 +50,7 @@ void test_lexer_next_token_simple_pos(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_END_OF_INPUT, "", &err);
     lexer_token token;
         
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -57,8 +59,8 @@ void test_lexer_next_token_simple_pos(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_simple_pos2(void) {
-    printf("\n*** test_lexer_next_token_simple_pos2 ***\n");
+void test_cpu_current_lexer_next_token_simple_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos2 ***\n");
 
     char input[] = "MO";
     int line = 0;
@@ -69,7 +71,7 @@ void test_lexer_next_token_simple_pos2(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MO", &err);
     lexer_token token;
         
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -78,8 +80,8 @@ void test_lexer_next_token_simple_pos2(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_simple_pos3(void) {
-    printf("\n*** test_lexer_next_token_simple_pos3 ***\n");
+void test_cpu_current_lexer_next_token_simple_pos3(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos3 ***\n");
 
     char input[] = "MOV a, 42";
     int line = 0;
@@ -90,7 +92,7 @@ void test_lexer_next_token_simple_pos3(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MOV", &err);
     lexer_token token;
 
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -99,8 +101,8 @@ void test_lexer_next_token_simple_pos3(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_simple_pos4(void) {
-    printf("\n*** test_lexer_next_token_simple_pos4 ***\n");
+void test_cpu_current_lexer_next_token_simple_pos4(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos4 ***\n");
 
     char input[] = "MOV a,";
     int line = 0;
@@ -111,7 +113,7 @@ void test_lexer_next_token_simple_pos4(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MOV", &err);
     lexer_token token;
 
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -120,8 +122,8 @@ void test_lexer_next_token_simple_pos4(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_simple_pos5(void) {
-    printf("\n*** test_lexer_next_token_simple_pos5 ***\n");
+void test_cpu_current_lexer_next_token_simple_pos5(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos5 ***\n");
 
     char input[] = ",";
     int line = 0;
@@ -132,7 +134,7 @@ void test_lexer_next_token_simple_pos5(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_COMMA, ",", &err);
     lexer_token token;
 
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -141,8 +143,8 @@ void test_lexer_next_token_simple_pos5(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_simple_neg(void) {
-    printf("\n*** test_lexer_next_token_simple_neg ***\n");
+void test_cpu_current_lexer_next_token_simple_neg(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_neg ***\n");
 
     char input[] = ":MOV a, 42";
     int line = 0;
@@ -153,7 +155,7 @@ void test_lexer_next_token_simple_neg(void) {
     lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_UNKNOWN, ":", &err);
     lexer_token token;
 
-    token = lexer_next_token(input, &pos, &line, &err);
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, token, err);
 
     lexer_destroy_token(&exp_token, &err);
@@ -162,7 +164,7 @@ void test_lexer_next_token_simple_neg(void) {
     error_destroy(&err);
 }
 
-void test_lexer_next_token_oneline_pos(void) {
+void test_cpu_current_lexer_next_token_oneline_pos(void) {
     printf("\n*** test_lex_next_token_oneline_pos ***\n");
 
     char input[] = "MOV abc, 4200";
@@ -187,7 +189,7 @@ void test_lexer_next_token_oneline_pos(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -201,8 +203,8 @@ void test_lexer_next_token_oneline_pos(void) {
     
 }
 
-void test_lexer_next_token_oneline_pos2(void) {
-    printf("\n*** test_lexer_next_token_oneline_pos2 ***\n");
+void test_cpu_current_lexer_next_token_oneline_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_pos2 ***\n");
 
     char input[] = "MOV abc,";
     int line = 0;
@@ -225,7 +227,7 @@ void test_lexer_next_token_oneline_pos2(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -240,8 +242,8 @@ void test_lexer_next_token_oneline_pos2(void) {
 }
 
 
-void test_lexer_next_token_oneline_pos3(void) {
-    printf("\n*** test_lexer_next_token_oneline_pos3 ***\n");
+void test_cpu_current_lexer_next_token_oneline_pos3(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_pos3 ***\n");
 
     char input[] = "11 11";
     int line = 0;
@@ -264,7 +266,7 @@ void test_lexer_next_token_oneline_pos3(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -279,7 +281,7 @@ void test_lexer_next_token_oneline_pos3(void) {
 }
 
 
-void test_lexer_next_token_oneline_neg(void) {
+void test_cpu_current_lexer_next_token_oneline_neg(void) {
     printf("\n*** test_lexer_next_token_oneline_neg ***\n");
     
     char input[] = "MOV ?";
@@ -303,7 +305,7 @@ void test_lexer_next_token_oneline_neg(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         if (TOKEN_END_OF_INPUT == token.type) {
@@ -325,8 +327,8 @@ void test_lexer_next_token_oneline_neg(void) {
     } while (TOKEN_END_OF_INPUT != token.type);
 }
 
-void test_lexer_next_token_oneline_neg2(void) {
-    printf("\n*** test_lexer_next_token_oneline_neg2 ***\n");
+void test_cpu_current_lexer_next_token_oneline_neg2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_neg2 ***\n");
 
     char input[] = "@";
     int line = 0;
@@ -351,7 +353,7 @@ void test_lexer_next_token_oneline_neg2(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         if (TOKEN_END_OF_INPUT == token.type) {
@@ -367,8 +369,8 @@ void test_lexer_next_token_oneline_neg2(void) {
 }
 
 
-void test_lexer_next_token_oneline_neg3(void) {
-    printf("\n*** test_lexer_next_token_oneline_neg2 ***\n");
+void test_cpu_current_lexer_next_token_oneline_neg3(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_neg2 ***\n");
 
     char input[] = "@";
     int line = 0;
@@ -391,7 +393,7 @@ void test_lexer_next_token_oneline_neg3(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -404,8 +406,8 @@ void test_lexer_next_token_oneline_neg3(void) {
 }
 
 
-void test_lexer_next_token_oneline_neg4(void) {
-    printf("\n*** test_lexer_next_token_oneline_neg2 ***\n");
+void test_cpu_current_lexer_next_token_oneline_neg4(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_neg2 ***\n");
 
     char input[] = " @ ?, _ - \\";
     int line = 0;
@@ -428,7 +430,7 @@ void test_lexer_next_token_oneline_neg4(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -440,7 +442,7 @@ void test_lexer_next_token_oneline_neg4(void) {
     }
 }
 
-void test_lexer_next_token_multiline_pos(void) {
+void test_cpu_current_lexer_next_token_multiline_pos(void) {
     printf("\n*** test_lex_next_token_multiline_pos ***\n");
     char input[] = "MOV a, 42\nMOV b, 5";
     int line = 0;
@@ -463,7 +465,7 @@ void test_lexer_next_token_multiline_pos(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -475,8 +477,8 @@ void test_lexer_next_token_multiline_pos(void) {
     } while (TOKEN_END_OF_INPUT != token.type);
 }
 
-void test_lexer_next_token_multiline_pos2(void) {
-    printf("\n*** test_lexer_next_token_multiline_pos2 ***\n");
+void test_cpu_current_lexer_next_token_multiline_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_multiline_pos2 ***\n");
     char input[] = "\n\n";
     int line = 0;
     int pos = 0;
@@ -498,7 +500,7 @@ void test_lexer_next_token_multiline_pos2(void) {
         error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
         lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
 
-        token = lexer_next_token(input, &pos, &line, &err);
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
         verify_token(exp_token, exp_err, token, err);
 
         error_destroy(&exp_err);
@@ -789,7 +791,7 @@ void test_lexer_create_token_arr_simple_pos(void) {
 
     lexer_destroy_token_arr(lexer_token_arr, &err);
 
-    // token = lexer_next_token(input, &pos, &line, &err);
+    // token = cpu_current_cpu_current_lexer_next_token(input, &pos, &line, &err);
     //verify_token(exp_token, exp_err, token, err);
 
 
@@ -805,22 +807,22 @@ int main(void) {
 
     printf("\n\n****** test lexer ****************************\n");
 
-    RUN_TEST( test_lexer_next_token_simple_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos );
     
-    RUN_TEST( test_lexer_next_token_simple_pos );
-    RUN_TEST( test_lexer_next_token_simple_pos2 );
-    RUN_TEST( test_lexer_next_token_simple_pos3 );
-    RUN_TEST( test_lexer_next_token_simple_pos4 );
-    RUN_TEST( test_lexer_next_token_simple_pos5 );
-    RUN_TEST( test_lexer_next_token_simple_neg );
-    RUN_TEST( test_lexer_next_token_oneline_pos );  
-    RUN_TEST( test_lexer_next_token_oneline_pos2 );
-    RUN_TEST( test_lexer_next_token_oneline_pos3 );
-    RUN_TEST( test_lexer_next_token_oneline_neg );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos2 );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos3 );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos4 );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_pos5 );
+    RUN_TEST( test_cpu_current_lexer_next_token_simple_neg );
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_pos );  
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_pos2 );
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_pos3 );
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg );
     
-    RUN_TEST( test_lexer_next_token_oneline_neg2 );
-    RUN_TEST( test_lexer_next_token_multiline_pos );
-    RUN_TEST( test_lexer_next_token_multiline_pos2 );
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg2 );
+    RUN_TEST( test_cpu_current_lexer_next_token_multiline_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_multiline_pos2 );
 
     RUN_TEST( test_lexer_create_token_arr_simple_pos);
     

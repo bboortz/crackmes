@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "unity.h"
 #include "cerror.h"
+#include "cpu.h"
 #include "cpu_6502.h"
 
 

@@ -220,13 +220,13 @@ $(TESTSCANNER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) src/ccharp.o src/error.o src/heap.o src/stack.o src/string.o src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o src/cpu_6502.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTPARSER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o src/parser.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/lexer.o src/parser.o src/cpu_6502.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTCPU65202): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCPU6502) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/cpu_6502.o src/parser.o tests/test_cpu_6502.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCPU6502) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o src/cpu_6502.o src/lexer.o src/parser.o tests/test_cpu_6502.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTINTERPRETER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) src/ccharp.o src/error.o src/heap.o src/string.o src/stack.o  src/lexer.o src/parser.o src/scanner.o src/cpu_6502.o src/interpreter.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
