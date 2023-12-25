@@ -108,6 +108,54 @@ int get_bit(unsigned char ch, int position) {
 }
 
 
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem(cpu_6502_mem* mem, uint16_t address) {
+    return &(mem->data[address]);
+}
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address) {
+    if (address > CPU_6502_MEM_ZERO_PAGE_MAX) {
+        // Handle out-of-bounds memory access here
+        printf("Memory address out of bounds: 0x%04X\n", address);
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address) {
+    if (address < CPU_6502_MEM_STACK_MIN || address > CPU_6502_MEM_STACK_MAX) {
+        // Handle out-of-bounds memory access here
+        printf("Memory address out of bounds: 0x%04X\n", address);
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address) {
+    if (address < CPU_6502_MEM_NORMAL_MIN || address > CPU_6502_MEM_NORMAL_MAX) {
+        // Handle out-of-bounds memory access here
+        printf("Memory address out of bounds: 0x%04X\n", address);
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address) {
+    if (address < CPU_6502_MEM_RESERVED_MIN) {
+        // Handle out-of-bounds memory access here
+        printf("Memory address out of bounds: 0x%04X\n", address);
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
 
 void cpu_6502_print_state(cpu_6502* cpu) {
     char* ps_binary = get_binary(cpu->ps);

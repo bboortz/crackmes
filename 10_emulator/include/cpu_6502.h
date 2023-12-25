@@ -8,6 +8,14 @@
 
 // Define a constant representing the maximum memory size for the CPU 6502
 #define CPU_6502_MAX_MEM 1024 * 64
+#define CPU_6502_MEM_ZERO_PAGE_MIN 0x0000
+#define CPU_6502_MEM_ZERO_PAGE_MAX 0x00FF
+#define CPU_6502_MEM_STACK_MIN 0x0100
+#define CPU_6502_MEM_STACK_MAX 0x01FF
+#define CPU_6502_MEM_NORMAL_MIN 0x0200
+#define CPU_6502_MEM_NORMAL_MAX 0xFFF9
+#define CPU_6502_MEM_RESERVED_MIN 0xFFFA
+#define CPU_6502_MEM_RESERVED_MAX 0xFFFF
 
 
 // Define a struct representing the memory of CPU 6502
