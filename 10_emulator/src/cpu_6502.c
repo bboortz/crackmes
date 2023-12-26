@@ -53,10 +53,18 @@ unsigned char* cpu_6502_get_mem(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address > CPU_6502_MEM_ZERO_PAGE_MAX) {
         // Handle out-of-bounds memory access here
-        printf("Memory address out of bounds: 0x%04X\n", address);
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
         return NULL;
     }
     
@@ -64,10 +72,18 @@ unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address < CPU_6502_MEM_STACK_MIN || address > CPU_6502_MEM_STACK_MAX) {
         // Handle out-of-bounds memory access here
-        printf("Memory address out of bounds: 0x%04X\n", address);
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
         return NULL;
     }
     
@@ -75,10 +91,18 @@ unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address < CPU_6502_MEM_NORMAL_MIN || address > CPU_6502_MEM_NORMAL_MAX) {
         // Handle out-of-bounds memory access here
-        printf("Memory address out of bounds: 0x%04X\n", address);
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
         return NULL;
     }
     
@@ -86,10 +110,18 @@ unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address < CPU_6502_MEM_RESERVED_MIN) {
         // Handle out-of-bounds memory access here
-        printf("Memory address out of bounds: 0x%04X\n", address);
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
         return NULL;
     }
     
@@ -142,8 +174,6 @@ void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit, error* err)
             return;
 
         default:
-            
-            
             err_flag[0] = flag;
             err_flag[1] = '\0';
             char *str1 = "unknown status flag";
@@ -183,7 +213,6 @@ int cpu_6502_get_status_flag(cpu_6502* cpu, char flag, error* err) {
             return cbase_conv_get_bit(cpu->ps, 7, err);
 
         default:
-            
             err_flag[0] = flag;
             err_flag[1] = '\0';
             char *str1 = "unknown status flag";
@@ -309,7 +338,6 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
     token.line = l;
     token.pos = p;
 
-
     //printf("# %d - %ld - <%s>\n", p, length, input);
 
     // Check for newline
@@ -325,21 +353,10 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         *line = l;
         *pos = p;
         return token;
-
-    /*
-        token.type = TOKEN_NEWLINE;
-        token.line++;
-        l++;
-        p++;
-        *line = l;
-        *pos = p;
-        return token;
-        */  
     }
 
     // Skip whitespace
     while (p < (int) length && isspace(input[p])) {
-        //printf("white\n");
         token.pos++;
         p++;
     }
@@ -348,11 +365,8 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
 
     // Check for end of input
     if (p == (int) length) {
-        //printf("end......\n");
         token.type = TOKEN_END_OF_INPUT;
         *err = error_create_default();
-        //*pos = p;
-        //return token;  
     
     // Check for comma (,)
     } else if (',' == input[p]) {
@@ -362,16 +376,9 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         input += p;
         p += ccharp_copy_substring(&token.value, input, 0, 1, err);
         token.type = TOKEN_COMMA;
-        //printf("-# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         *err = error_create_default();
-/*
-        token.value[0] = input[p++];
-        token.value[1] = '\0';
-        token.type = TOKEN_COMMA;
-        *err = error_create_default();
-        */
     
-    // Check for strings
+    // Check for literal
     } else if (isalpha(input[p])) {
         //printf("## %d\n", *pos);
 
@@ -419,8 +426,6 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         //*pos = p;
         
         //token.type = TOKEN_STRING;
-        
-
 
     // Check for numerical operands
     } else if (isdigit(input[p])) {
@@ -428,6 +433,28 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
 
         heap_free(token.value, err);
         input += p;
+        p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
+        token.type = TOKEN_NUMBER;
+        *err = error_create_default();
+
+        /*
+        int j = 0;
+        // TODO replace copy method!
+        while (j < MAX_TOKEN_VALUE && p < (int) length && isdigit(input[p])) {
+            token.value[j++] = input[p++];
+        }
+        token.value[j] = '\0';
+        token.type = TOKEN_NUMBER;
+        */
+
+    // Check for numerical operands
+    } else if ('#' == input[p] ) {
+        printf("## %d\n", *pos);
+
+        heap_free(token.value, err);
+        p++;   // skipping the character #
+        input += p;
+        
         p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
         token.type = TOKEN_NUMBER;
         *err = error_create_default();

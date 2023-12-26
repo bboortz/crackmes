@@ -38,6 +38,50 @@ void verify_token(lexer_token exp_token, error exp_err, lexer_token token, error
 }
 
 
+void test_cpu_current_lexer_next_token_number_pos(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_simple_pos ***\n");
+
+    char input[] = "1";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_NUMBER, "1", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
+}
+
+
+void test_cpu_current_lexer_next_token_number_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_number_pos2 ***\n");
+
+    char input[] = "#222";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_NUMBER, "222", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
+}
+
+
 void test_cpu_current_lexer_next_token_simple_pos(void) {
     printf("\n*** test_cpu_current_lexer_next_token_simple_pos ***\n");
 
@@ -715,47 +759,6 @@ void test_lexer_process_string_neg(void) {
 }
 
 
-
-void test_lexer_process_string_neg2(void) {
-    printf("\n*** test_lexer_process_string_neg ***\n");
-
-    char input[] = ":MOV a, 42\nMOV b, 5";
-
-    int test_pos[]  = {0, 1, 5, 6, 8, 10, 11, 15, 16, 18, 19 };
-    int test_line[] = {0, 0, 0, 0, 0,  1,  1,  1,  1,  1, 1};
-    int test_type[] = {TOKEN_UNKNOWN, TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
-    char *test_value[] = {":", "MOV", "a", ",", "42", "", "MOV", "b", ",", "5", ""};
-    // error_type test_error_types[] = {ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER };
-    // error_criticality test_error_crits[] = {ERR_CRIT_WARN, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
-    // char *test_error_messages[] = { "unknown character: \":\"", "", "", "", "", "", "", "", "", "", "" };
-    // char *test_error_causes[] = { "character unknown. please verify your input.", "", "", "", "", "", "", "", "", "" };
-    int test = 0;
-
-    error exp_err = error_create(ERR_LEXER, ERR_CRIT_WARN, "unknown character: \":\"", "character unknown. please verify your input.");
-    error err = error_create_default();
-    lexer_token *lexer_token_arr = lexer_process_string(input, &err);
-    //lexer_print_token_arr(lexer_token_arr);
-
-    while (MAX_TOKEN_NODES > test) {
-        // error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
-        lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
-
-        verify_token(exp_token, exp_err, lexer_token_arr[test], err);
-        
-        error_destroy(&exp_err);
-        error_destroy(&err);
-        lexer_destroy_token(&exp_token, &err);
-
-        if (TOKEN_END_OF_INPUT == lexer_token_arr[test].type) {
-            
-            break;
-        } 
-
-        test++;
-    }
-}
-
-
 void test_lexer_create_token_arr_simple_pos(void) {
     printf("\n*** test_lexer_create_token_arr_simple_pos ***\n");
 /*
@@ -802,10 +805,62 @@ void test_lexer_create_token_arr_simple_pos(void) {
 }
 
 
+void test_lexer_process_string_hashnumber_pos(void) {
+    printf("\n*** test_lexer_process_string_hashnumber_pos ***\n");
+
+    char input[] = "MOV a, #42\nMOV b, 5";
+
+    int test_pos[]  = {0, 4, 5, 7, 10, 11, 15, 16, 18, 19 };
+    int test_line[] = {0, 0, 0, 0,  0,  1,  1,  1,  1, 1};
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_NEWLINE, TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    char *test_value[] = {"MOV", "a", ",", "42", "\n", "MOV", "b", ",", "5", ""};
+    error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
+    error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO,  ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
+    char *test_error_messages[] = { "", "", "", "", "", "",  "", "", "", "", "", ""  };
+    char *test_error_causes[] = { "", "", "", "", "", "",  "", "", "", "", "", ""  };
+    int test = 0;
+
+    error err;
+    lexer_token *lexer_token_arr = lexer_process_string(input, &err);
+    lexer_print_token_arr(lexer_token_arr);
+
+    TEST_ASSERT_EQUAL_INT_MESSAGE(ERR_SUCCESS, err.code, "error code not correct!");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(ERR_CRIT_INFO, err.crit, "error crit not correct!");
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("", err.message, "error message not correct!");
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("", err.cause, "error cause not correct!");
+    error_destroy(&err);
+
+    while (MAX_TOKEN_NODES > test) {
+        printf("--> %d\n", test);
+        lexer_print_token(lexer_token_arr[test]);
+
+        error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
+        printf("*** alloc %d\n", test);
+        err = error_create_default();
+        lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
+        verify_token(exp_token, exp_err, lexer_token_arr[test], err);        
+        
+        error_destroy(&exp_err);
+        error_destroy(&err);
+        lexer_destroy_token(&exp_token, &err);
+
+        if (TOKEN_END_OF_INPUT == lexer_token_arr[test].type) {
+            break;
+        } 
+
+        test++;
+    }
+
+    lexer_destroy_token_arr(lexer_token_arr, &err);
+}
+
 int main(void) {
     UNITY_BEGIN(); 
 
     printf("\n\n****** test lexer ****************************\n");
+    /*
+    RUN_TEST( test_cpu_current_lexer_next_token_number_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_number_pos2 );
 
     RUN_TEST( test_cpu_current_lexer_next_token_simple_pos );
     
@@ -831,9 +886,9 @@ int main(void) {
     RUN_TEST( test_lexer_process_string_pos3 );
     
     RUN_TEST( test_lexer_process_string_neg );
+    */
 
-    
-
+    RUN_TEST( test_lexer_process_string_hashnumber_pos );
     
     heap_print_stat();
     //error err;
