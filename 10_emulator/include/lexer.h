@@ -7,7 +7,7 @@
 #include "cerror.h"
 
 
-#define MAX_TOKEN_NODES 10
+#define MAX_TOKEN_NODES 20
 #define MAX_TOKEN_VALUE 20
 
 

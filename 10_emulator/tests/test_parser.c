@@ -399,16 +399,14 @@ void test_parser_next_token_multiline_pos(void) {
 void test_parser_process_pos(void) {
     printf("\n*** test_parser_process_pos ***\n");
 
-    char input[] = "MOV a, 42\nMOV b, 5";
+    char input[] = "LDA #$ff\nSTA $1000";
 
     error err = error_create_default();
     parser_cst_node* exp_ast_node_arr = parser_create_cst_node_arr(MAX_CST_NODES, &err);
-    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "MOV", &err);
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_REGISTER, "a", &err), &err );
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 7, CST_NUMBER, "42", &err), &err );
-    exp_ast_node_arr[1] = parser_create_cst_node_values(1, 10, CST_INSTRUCTION, "MOV", &err);
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[1], parser_create_cst_node_values(1, 14, CST_REGISTER, "b", &err), &err );
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[1], parser_create_cst_node_values(1, 17, CST_NUMBER, "5", &err), &err );
+    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "LDA", &err);
+    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_NUMBER, "255", &err), &err );
+    exp_ast_node_arr[1] = parser_create_cst_node_values(1, 9, CST_INSTRUCTION, "STA", &err);
+    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[1], parser_create_cst_node_values(1, 13, CST_ADDRESS, "4096", &err), &err );
     exp_ast_node_arr[2] = parser_create_cst_node_values(1, 18, CST_END_OF_INPUT, "", &err);
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -439,17 +437,18 @@ void test_parser_process_pos(void) {
 void test_parser_process_neg(void) {
     printf("\n*** test_parser_process_neg ***\n");
 
-    char input[] = "MOV a, ";
+    char input[] = "LDA - ";
 
     error err = error_create_default();
     parser_cst_node* exp_ast_node_arr = parser_create_cst_node_arr(MAX_CST_NODES, &err);
-    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "MOV", &err);
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_REGISTER, "a", &err), &err );
-    exp_ast_node_arr[1] = parser_create_cst_node_values(0, 7, CST_END_OF_INPUT, "", &err);
-    error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
-    error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
-    char *test_error_messages[] = { "", "", "", "", "", "", "", "", "", "", "" };
-    char *test_error_causes[] = { "", "", "", "", "", "", "", "", "", "" };
+    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "LDA", &err);
+    //parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_REGISTER, "a", &err), &err );
+    exp_ast_node_arr[1] = parser_create_cst_node_values(0, 4, CST_UNKNOWN, "-", &err);
+    exp_ast_node_arr[2] = parser_create_cst_node_values(0, 6, CST_END_OF_INPUT, "", &err);
+    error_type test_error_types[] = {ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
+    error_criticality test_error_crits[] = {ERR_CRIT_WARN, ERR_CRIT_WARN, ERR_CRIT_WARN, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
+    char *test_error_messages[] = { "unknown character: \"-\"", "unknown character: \"-\"", "unknown character: \"-\"", "", "", "", "", "", "", "", "" };
+    char *test_error_causes[] = { "character unknown. please verify your input.", "character unknown. please verify your input.", "character unknown. please verify your input.", "", "", "", "", "", "", "" };
 
     lexer_token* lexer_token_arr = lexer_process_string(input, &err);
     parser_cst_node *cst_node_arr = parser_process(lexer_token_arr, MAX_CST_NODES, &err);
@@ -467,26 +466,26 @@ void test_parser_process_neg(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1, i);
+    TEST_ASSERT_EQUAL_INT(2, i);
 }
 
 
 void test_parser_process_neg2(void) {
     printf("\n*** test_parser_process_neg2 ***\n");
 
-    char input[] = "MOV a, 42\nMOV";
+    char input[] = "LDA #$FF\nLDX #";
 
     error err = error_create_default();
     parser_cst_node* exp_ast_node_arr = parser_create_cst_node_arr(MAX_CST_NODES, &err);
-    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "MOV", &err);
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_REGISTER, "a", &err), &err );
-    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 7, CST_NUMBER, "42", &err), &err );
-    exp_ast_node_arr[1] = parser_create_cst_node_values(1, 10, CST_INSTRUCTION, "MOV", &err);
-    exp_ast_node_arr[2] = parser_create_cst_node_values(1, 13, CST_END_OF_INPUT, "", &err);
-    error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
-    error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
-    char *test_error_messages[] = { "", "", "", "", "", "", "", "", "", "", "" };
-    char *test_error_causes[] = { "", "", "", "", "", "", "", "", "", "" };
+    exp_ast_node_arr[0] = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "LDA", &err);
+    parser_add_cst_node_to_cst_node(&exp_ast_node_arr[0], parser_create_cst_node_values(0, 4, CST_NUMBER, "255", &err), &err );
+    exp_ast_node_arr[1] = parser_create_cst_node_values(1, 9, CST_INSTRUCTION, "LDX", &err);
+    exp_ast_node_arr[2] = parser_create_cst_node_values(1, 13, CST_UNKNOWN, "#", &err);
+    exp_ast_node_arr[3] = parser_create_cst_node_values(1, 14, CST_END_OF_INPUT, "", &err);
+    error_type test_error_types[] = {ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
+    error_criticality test_error_crits[] = {ERR_CRIT_WARN, ERR_CRIT_WARN, ERR_CRIT_WARN, ERR_CRIT_WARN, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
+    char *test_error_messages[] = { "unknown token: \"#\"", "unknown token: \"#\"", "unknown token: \"#\"", "unknown token: \"#\"", "", "", "", "", "", "", "" };
+    char *test_error_causes[] = { "token unknown. please verify your input.", "token unknown. please verify your input.", "token unknown. please verify your input.", "token unknown. please verify your input.", "", "", "", "", "", "" };
 
     
 
@@ -506,7 +505,7 @@ void test_parser_process_neg2(void) {
         i++;
     }
  
-    TEST_ASSERT_EQUAL_INT(2, i);
+    TEST_ASSERT_EQUAL_INT(3, i);
 }
 
 

@@ -9,7 +9,7 @@
 
 
 #define MAX_CST_NODES 100
-#define MAX_CST_NODE_CHILDREN 2
+#define MAX_CST_NODE_CHILDREN 1
 
 // concrete syntax tree (CST) token types
 typedef enum {

@@ -7,6 +7,9 @@ set -u
 ./output/test_scanner < <( echo "lda 1")
 ./output/test_lexer
 ./output/test_parser
+./output/test_interpreter
+./output/test_cpu_6502
+
 ./output/test < <( echo "lda 1")
 ./output/test < <( echo "lda 2")
 ./output/test < <( echo "lda 5")
