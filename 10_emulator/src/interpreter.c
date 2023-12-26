@@ -70,7 +70,7 @@ int interpreter_interpret_instruction(parser_cst_node node, interpreter_state* s
 */
 
 //int interpreter_interpret_cst_node(parser_cst_node node, interpreter_state* state, error* err) {
-int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* err) {
+int interpreter_interpret_cst_node(parser_cst_node node, void* cpu, error* err) {
 
     //printf("------------\n");
     //parser_print_cst_node(node);
@@ -92,13 +92,13 @@ int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* e
 
     }
 
-    cpu->ip++;
+    
 
     interpreter_print_state(cpu, err);
 
     return RET_SUCCESS;
 }
 
-void interpreter_print_state(cpu_6502* cpu, error* err) {
+void interpreter_print_state(void* cpu, error* err) {
     cpu_6502_print_state(cpu, err);
 }

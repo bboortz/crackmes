@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "cpu_6502.h"
+#include "cpu_8086.h"
 #include "cpu.h"
 #include "cbase_conv.h"
 #include "ccharp.h"
@@ -13,23 +13,23 @@
 
 
 
-cpu_6502 cpu_6502_create() {
-    cpu_6502 cpu = {0};
+cpu_8086 cpu_8086_create() {
+    cpu_8086 cpu = {0};
 
-    cpu_6502_reset(&cpu);
+    cpu_8086_reset(&cpu);
 
     return cpu;
 }
 
 
-int cpu_6502_destroy(cpu_6502* cpu) {
-    return cpu_6502_reset(cpu);
+int cpu_8086_destroy(cpu_8086* cpu) {
+    return cpu_8086_reset(cpu);
 }
 
 
 
 
-int cpu_6502_reset(cpu_6502* cpu) {
+int cpu_8086_reset(cpu_8086* cpu) {
     cpu->type = CPU_TYPE_6502;
     cpu->ip = 0xFFFC;
     cpu->sp = 0x0100;
@@ -48,12 +48,12 @@ int cpu_6502_reset(cpu_6502* cpu) {
 
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_8086_get_mem(cpu_8086_mem* mem, uint16_t address) {
     return &(mem->data[address]);
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_8086_get_mem_zero_page(cpu_8086_mem* mem, uint16_t address) {
     if (address > CPU_6502_MEM_ZERO_PAGE_MAX) {
         // Handle out-of-bounds memory access here
         printf("Memory address out of bounds: 0x%04X\n", address);
@@ -64,7 +64,7 @@ unsigned char* cpu_6502_get_mem_zero_page(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_8086_get_mem_stack(cpu_8086_mem* mem, uint16_t address) {
     if (address < CPU_6502_MEM_STACK_MIN || address > CPU_6502_MEM_STACK_MAX) {
         // Handle out-of-bounds memory access here
         printf("Memory address out of bounds: 0x%04X\n", address);
@@ -75,7 +75,7 @@ unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_8086_get_mem_normal(cpu_8086_mem* mem, uint16_t address) {
     if (address < CPU_6502_MEM_NORMAL_MIN || address > CPU_6502_MEM_NORMAL_MAX) {
         // Handle out-of-bounds memory access here
         printf("Memory address out of bounds: 0x%04X\n", address);
@@ -86,7 +86,7 @@ unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address) {
 }
 
 // Function to access memory at a specific address
-unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address) {
+unsigned char* cpu_8086_get_mem_reserved(cpu_8086_mem* mem, uint16_t address) {
     if (address < CPU_6502_MEM_RESERVED_MIN) {
         // Handle out-of-bounds memory access here
         printf("Memory address out of bounds: 0x%04X\n", address);
@@ -96,7 +96,7 @@ unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address) {
     return &(mem->data[address]);
 }
 
-void cpu_6502_print_state(cpu_6502* cpu, error* err) {
+void cpu_8086_print_state(cpu_8086* cpu, error* err) {
     char* ps_binary = cbase_conv_get_binary_from_charp(cpu->ps, err);
     printf("\n Registers |    IP |    SP |   A |   X |   Y | PS: NO-BDIZC       |\n");
     printf("           | %5d | %5d | %3d | %3d | %3d |     %8s (%3d) | \n", cpu->ip, cpu->sp, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
@@ -108,7 +108,7 @@ void cpu_6502_print_state(cpu_6502* cpu, error* err) {
 
 
 
-void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit, error* err) {
+void cpu_8086_set_status_flag(cpu_8086* cpu, char flag, uint8_t bit, error* err) {
     char *err_msg;
     char err_flag[2];
 
@@ -156,7 +156,7 @@ void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit, error* err)
 }
 
 
-int cpu_6502_get_status_flag(cpu_6502* cpu, char flag, error* err) {
+int cpu_8086_get_status_flag(cpu_8086* cpu, char flag, error* err) {
     char *err_msg = "";
     char err_flag[2];
 
@@ -199,7 +199,7 @@ int cpu_6502_get_status_flag(cpu_6502* cpu, char flag, error* err) {
 
 
 
-int cpu_6502_interpret_instruction_nop(parser_cst_node node, error* err) {
+int cpu_8086_interpret_instruction_nop(parser_cst_node node, error* err) {
      if (0 != node.num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 0 parameter", "wrong number of parameters.");
     }
@@ -208,7 +208,7 @@ int cpu_6502_interpret_instruction_nop(parser_cst_node node, error* err) {
 }
 
 
-int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, error* err) {
+int cpu_8086_interpret_instruction_lda(parser_cst_node node, cpu_8086* cpu, error* err) {
      if (1 != node.num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
@@ -219,13 +219,13 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_a = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
-    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
+    if (0 == cpu->reg_a) cpu_8086_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_8086_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, error* err) {
+int cpu_8086_interpret_instruction_ldx(parser_cst_node node, cpu_8086* cpu, error* err) {
     if (1 != node.num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
@@ -236,13 +236,13 @@ int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_x = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
-    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
+    if (0 == cpu->reg_a) cpu_8086_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_8086_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, error* err) {
+int cpu_8086_interpret_instruction_ldy(parser_cst_node node, cpu_8086* cpu, error* err) {
     if (1 != node.num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
@@ -253,15 +253,15 @@ int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_y = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
-    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
+    if (0 == cpu->reg_a) cpu_8086_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_8086_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }
 
 
 
-int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
+int cpu_8086_interpret_instruction(parser_cst_node node, cpu_8086* cpu, error* err) {
     //parser_print_cst_node(node);
     //error_print(*err);
     
@@ -271,16 +271,16 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
 
     printf("Instruction: %s\n", instruction);
     if (strncmp(instruction, "NOP", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_nop(node, err);
+        cpu_8086_interpret_instruction_nop(node, err);
     
     } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_lda(node, cpu, err);
+        cpu_8086_interpret_instruction_lda(node, cpu, err);
 
     } else if (strncmp(instruction, "LDX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldx(node, cpu, err);
+        cpu_8086_interpret_instruction_ldx(node, cpu, err);
 
     } else if (strncmp(instruction, "LDY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldy(node, cpu, err);
+        cpu_8086_interpret_instruction_ldy(node, cpu, err);
 
     } else {
         char *err_msg = "";
@@ -300,7 +300,7 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
 
 
 // Get the next token from input
-lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* err) {
+lexer_token cpu_8086_lexer_next_token(char *input, int *line, int *pos, error* err) {
     lexer_token token = lexer_create_token(err);
     
     int l = *line;
@@ -478,7 +478,7 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
 
 
 /*
-int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err) {
+int cpu_8086_interpret_instruction_mov(parser_cst_node node, cpu_8086* cpu, error* err) {
     // printf("MOV instruction\n");
     //parser_print_cst_node(node);
     //error_print(*err);
