@@ -70,7 +70,7 @@ void test_parser_next_token_simple_pos(void) {
     
     error exp_err = error_create_default();
     error err = error_create_default();
-    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MOV", &err);
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_LITERAL, "MOV", &err);
     lexer_token* lexer_token_arr = lexer_create_token_arr(MAX_TOKEN_NODES, &err);
     
     parser_cst_node exp_ast_token = parser_create_cst_node_values(0, 0, CST_INSTRUCTION, "MOV", &err);
@@ -140,7 +140,7 @@ void test_parser_next_token_oneline_pos(void) {
     int test_pos[]  = {0, 4, 7, 9, 13 };
     int test_line[] = {0, 0, 0, 0,  0};
     char *test_value[] = {"MOV", "abc", ",", "4200", ""};
-    int test_token_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_token_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     int test_parser_cst_type[] = {CST_INSTRUCTION, CST_REGISTER, CST_IGNORE, CST_NUMBER,  CST_END_OF_INPUT };
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -179,7 +179,7 @@ void test_parser_next_token_multiline_pos(void) {
     int test_pos[]  = {0, 4, 5, 7, 9, 10, 14, 15, 17, 18 };
     int test_line[] = {0, 0, 0, 0,  0,  1,  1,  1,  1, 1};
     char *test_value[] = {"MOV", "a", ",", "42", "\n", "MOV", "b", ",", "5", ""};
-    int test_token_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_STRING,  TOKEN_STRING,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_token_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     int test_parser_cst_type[] = {CST_INSTRUCTION, CST_REGISTER, CST_IGNORE, CST_NUMBER,  CST_IGNORE,  CST_INSTRUCTION,  CST_REGISTER,  CST_IGNORE,  CST_NUMBER, CST_END_OF_INPUT };
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };

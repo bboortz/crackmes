@@ -17,7 +17,7 @@ typedef enum {
     TOKEN_END_OF_INPUT,
     TOKEN_NEWLINE,
     TOKEN_COMMA,
-    TOKEN_STRING,
+    TOKEN_LITERAL,
     TOKEN_NUMBER,
     TOKEN_NUM_TYPES
 } lexer_token_type;

@@ -18,9 +18,8 @@ const char* lexer_map_token_type_to_string(lexer_token_type t) {
         "END_OF_INPUT",
         "NEWLINE",
         "COMMA(,)",
-        "STRING",
+        "LITERAL",
         "NUMBER",
-        
     };
 
     if (t >= 0 && t < TOKEN_NUM_TYPES) {

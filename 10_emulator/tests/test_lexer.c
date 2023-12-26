@@ -68,7 +68,7 @@ void test_cpu_current_lexer_next_token_simple_pos2(void) {
     
     error exp_err = error_create_default();
     error err;
-    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MO", &err);
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_LITERAL, "MO", &err);
     lexer_token token;
         
     token = cpu_current_lexer_next_token(input, &pos, &line, &err);
@@ -89,7 +89,7 @@ void test_cpu_current_lexer_next_token_simple_pos3(void) {
 
     error exp_err = error_create_default();
     error err;
-    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MOV", &err);
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_LITERAL, "MOV", &err);
     lexer_token token;
 
     token = cpu_current_lexer_next_token(input, &pos, &line, &err);
@@ -110,7 +110,7 @@ void test_cpu_current_lexer_next_token_simple_pos4(void) {
 
     error exp_err = error_create_default();
     error err;
-    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_STRING, "MOV", &err);
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_LITERAL, "MOV", &err);
     lexer_token token;
 
     token = cpu_current_lexer_next_token(input, &pos, &line, &err);
@@ -173,7 +173,7 @@ void test_cpu_current_lexer_next_token_oneline_pos(void) {
 
     int test_pos[] = {0, 4, 7, 9, 13 };
     int test_line[] = {0, 0, 0, 0, 0 };
-    int test_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     char *test_value[] = {"MOV", "abc", ",", "4200", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS};
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -212,7 +212,7 @@ void test_cpu_current_lexer_next_token_oneline_pos2(void) {
 
     int test_pos[] = {0, 4, 7, 8 };
     int test_line[] = {0, 0, 0, 0};
-    int test_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_END_OF_INPUT  };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_END_OF_INPUT  };
     char *test_value[] = {"MOV", "abc", ",", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS};
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -290,7 +290,7 @@ void test_cpu_current_lexer_next_token_oneline_neg(void) {
 
     int test_pos[] = {0, 4, 5 };
     int test_line[] = {0, 0, 0};
-    int test_type[] = {TOKEN_STRING, TOKEN_UNKNOWN, TOKEN_END_OF_INPUT  };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_UNKNOWN, TOKEN_END_OF_INPUT  };
     char *test_value[] = {"MOV", "?", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_LEXER, ERR_SUCCESS};
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_WARN, ERR_CRIT_INFO};
@@ -450,7 +450,7 @@ void test_cpu_current_lexer_next_token_multiline_pos(void) {
 
     int test_pos[]  = {0, 4, 5, 7, 9, 10, 14, 15, 17, 18 };
     int test_line[] = {0, 0, 0, 0,  0,  1,  1,  1,  1, 1};
-    int test_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_STRING,  TOKEN_STRING,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     char *test_value[] = {"MOV", "a", ",", "42", "\n", "MOV", "b", ",", "5", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -520,7 +520,7 @@ void test_lexer_process_string_pos(void) {
 
     int test_pos[]  = {0, 3, 5, 6};
     int test_line[] = {0, 0, 0, 0};
-    int test_type[] = {TOKEN_STRING, TOKEN_END_OF_INPUT, TOKEN_COMMA, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_END_OF_INPUT, TOKEN_COMMA, TOKEN_END_OF_INPUT };
     char *test_value[] = {"MOV", "", ",", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -571,7 +571,7 @@ void test_lexer_process_string_pos2(void) {
 
     int test_pos[]  = {0, 4, 5, 6};
     int test_line[] = {0, 0, 0, 0};
-    int test_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_END_OF_INPUT, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_END_OF_INPUT, TOKEN_END_OF_INPUT };
     char *test_value[] = {"MOV", "a", "", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -621,7 +621,7 @@ void test_lexer_process_string_pos3(void) {
 
     int test_pos[]  = {0, 4, 5, 7, 9, 10, 14, 15, 17, 18 };
     int test_line[] = {0, 0, 0, 0,  0,  1,  1,  1,  1, 1};
-    int test_type[] = {TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_NEWLINE, TOKEN_STRING,  TOKEN_STRING,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_NEWLINE, TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     char *test_value[] = {"MOV", "a", ",", "42", "\n", "MOV", "b", ",", "5", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO,  ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -671,7 +671,7 @@ void test_lexer_process_string_neg(void) {
 
     int test_pos[]  = {0, 1, 5, 6, 8, 10, 11, 15, 16, 18, 19 };
     int test_line[] = {0, 0, 0, 0, 0,  0,  1,  1,  1,  1, 1};
-    int test_type[] = {TOKEN_UNKNOWN, TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_NEWLINE, TOKEN_STRING,  TOKEN_STRING,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_UNKNOWN, TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER, TOKEN_NEWLINE, TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     char *test_value[] = {":", "MOV", "a", ",", "42", "\n", "MOV", "b", ",", "5", ""};
     error_type test_error_types[] = {ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS, ERR_SUCCESS };
     error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO,  ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };
@@ -723,7 +723,7 @@ void test_lexer_process_string_neg2(void) {
 
     int test_pos[]  = {0, 1, 5, 6, 8, 10, 11, 15, 16, 18, 19 };
     int test_line[] = {0, 0, 0, 0, 0,  1,  1,  1,  1,  1, 1};
-    int test_type[] = {TOKEN_UNKNOWN, TOKEN_STRING, TOKEN_STRING, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_STRING,  TOKEN_STRING,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
+    int test_type[] = {TOKEN_UNKNOWN, TOKEN_LITERAL, TOKEN_LITERAL, TOKEN_COMMA, TOKEN_NUMBER,  TOKEN_NEWLINE,  TOKEN_LITERAL,  TOKEN_LITERAL,  TOKEN_COMMA,  TOKEN_NUMBER, TOKEN_END_OF_INPUT };
     char *test_value[] = {":", "MOV", "a", ",", "42", "", "MOV", "b", ",", "5", ""};
     // error_type test_error_types[] = {ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER, ERR_LEXER };
     // error_criticality test_error_crits[] = {ERR_CRIT_WARN, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO, ERR_CRIT_INFO };

@@ -230,7 +230,7 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
     } 
     
     // Check for Strnig
-    if (TOKEN_STRING == input.type ) {
+    if (TOKEN_LITERAL == input.type ) {
         if (0 == token.pos) {
             token.type = CST_INSTRUCTION;
             strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters

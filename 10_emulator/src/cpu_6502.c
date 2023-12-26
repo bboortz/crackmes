@@ -376,7 +376,7 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring_as_long_as_char(&token.value, input, err);
-        token.type = TOKEN_STRING;
+        token.type = TOKEN_LITERAL;
         *err = error_create_default();
 
 /*
