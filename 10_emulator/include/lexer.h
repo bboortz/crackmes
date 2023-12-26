@@ -20,6 +20,7 @@ typedef enum {
     TOKEN_LITERAL,
     TOKEN_NUMBER_DEC,
     TOKEN_NUMBER_HEX,
+    TOKEN_ADDRESS,
     TOKEN_NUM_TYPES,
 } lexer_token_type;
 

@@ -415,7 +415,7 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         }
 
         // not a number --> error
-        if (! isdigit(input[p])) {
+        if ( ! (TOKEN_NUMBER_DEC == token.type && isdigit(input[p]) ) && ! (TOKEN_NUMBER_HEX == token.type && isxdigit(input[p]) ) ) {
             input += p - inc;
             p += ccharp_copy_substring_until_whitespace(&token.value, input, err);
             token.type = TOKEN_UNKNOWN;
@@ -435,7 +435,13 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         }
 
         input += p;
-        p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
+
+        if (TOKEN_NUMBER_HEX == token.type) {
+            p += ccharp_copy_substring_as_long_as_xdigit(&token.value, input, err);
+        } else {
+            p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
+        }
+        
         *err = error_create_default();
 
     // unknown

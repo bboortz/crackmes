@@ -122,6 +122,30 @@ int ccharp_copy_substring_as_long_as_digit(char** dst, char* src, error* err) {
 }
 
 
+int ccharp_copy_substring_as_long_as_xdigit(char** dst, char* src, error* err) {
+    
+    size_t src_len = strlen(src); // +1 for the null-terminator
+    size_t dst_len = 0;
+    char* src_begin = src;
+
+    if (0 == src_len) {
+        return RET_SUCCESS;
+    }
+
+    if (! isxdigit(*src)) {
+        return RET_SUCCESS;
+    }
+
+    while (isxdigit(*src)) {
+        dst_len++;
+        src++;
+    }
+    //printf("%ld\n", dst_len);
+
+    return ccharp_copy_substring(dst, src_begin, 0, dst_len, err);
+}
+
+
 int ccharp_copy_substring_until_whitespace(char** dst, char* src, error* err) {
     
     size_t src_len = strlen(src); // +1 for the null-terminator

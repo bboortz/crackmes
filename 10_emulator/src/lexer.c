@@ -21,6 +21,7 @@ const char* lexer_map_token_type_to_string(lexer_token_type t) {
         "LITERAL",
         "NUMBER_DEC",
         "NUMBER_HEX",
+        "ADDRESS",
     };
 
     if (t >= 0 && t < TOKEN_NUM_TYPES) {

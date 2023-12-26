@@ -105,6 +105,49 @@ void test_cpu_current_lexer_next_token_number_hex_pos(void) {
 }
 
 
+void test_cpu_current_lexer_next_token_number_hex_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_number_hex_pos2 ***\n");
+
+    char input[] = "#$0a";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_NUMBER_HEX, "0a", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
+}
+
+
+void test_cpu_current_lexer_next_token_number_hex_pos3(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_number_hex_pos3 ***\n");
+
+    char input[] = "#$f0";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_NUMBER_HEX, "f0", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
+}
+
 void test_cpu_current_lexer_next_token_simple_pos(void) {
     printf("\n*** test_cpu_current_lexer_next_token_simple_pos ***\n");
 
@@ -976,12 +1019,16 @@ int main(void) {
 
     printf("\n\n****** test lexer ****************************\n");
 
+
     RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg5 );
     RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg6 );
 
     RUN_TEST( test_cpu_current_lexer_next_token_number_dec_pos );
     RUN_TEST( test_cpu_current_lexer_next_token_number_dec_pos2 );
+    
     RUN_TEST( test_cpu_current_lexer_next_token_number_hex_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_number_hex_pos2 );
+    RUN_TEST( test_cpu_current_lexer_next_token_number_hex_pos3 );
 
     RUN_TEST( test_cpu_current_lexer_next_token_simple_pos );
     
