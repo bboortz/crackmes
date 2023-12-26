@@ -133,6 +133,7 @@ TESTCHEAP   := test_cheap
 TESTCERROR   := test_cerror
 TESTCSTRING   := test_cstring
 TESTCCHARP   := test_ccharp
+TESTCBASE_CONV   := test_cbase_conv
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
 TESTSOURCEDIRS	:= $(shell find $(TESTSRC) -type d)
 INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
@@ -173,11 +174,12 @@ TESTOBJECTSUNITY := ../tests_include/unity/CMakeFiles/unity.dir/src/unity.c.o
 # deleting dependencies appended to the file from 'make depend'
 #
 
-TESTOUTPUTCSTACK		:= $(call FIXPATH,$(OUTPUT)/$(TESTCSTACK))
-TESTOUTPUTCHEAP		:= $(call FIXPATH,$(OUTPUT)/$(TESTCHEAP))
-TESTOUTPUTCERROR		:= $(call FIXPATH,$(OUTPUT)/$(TESTCERROR))
-TESTOUTPUTCSTRING		:= $(call FIXPATH,$(OUTPUT)/$(TESTCSTRING))
-TESTOUTPUTCCHARP		:= $(call FIXPATH,$(OUTPUT)/$(TESTCCHARP))
+TESTOUTPUTCSTACK			:= $(call FIXPATH,$(OUTPUT)/$(TESTCSTACK))
+TESTOUTPUTCHEAP				:= $(call FIXPATH,$(OUTPUT)/$(TESTCHEAP))
+TESTOUTPUTCERROR			:= $(call FIXPATH,$(OUTPUT)/$(TESTCERROR))
+TESTOUTPUTCSTRING			:= $(call FIXPATH,$(OUTPUT)/$(TESTCSTRING))
+TESTOUTPUTCCHARP			:= $(call FIXPATH,$(OUTPUT)/$(TESTCCHARP))
+TESTOUTPUTCBASE_CONV		:= $(call FIXPATH,$(OUTPUT)/$(TESTCBASE_CONV))
 
 
 $(OUTPUT):
@@ -203,8 +205,11 @@ $(TESTCSTRING): compiletestobjects
 $(TESTCCHARP): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCCHARP) $(OBJECTS) tests/test_ccharp.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
+$(TESTCBASE_CONV): compiletestobjects
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCBASE_CONV) $(OBJECTS) tests/test_cbase_conv.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-test: compiletestobjects $(TESTCSTACK) $(TESTCHEAP) $(TESTCERROR) $(TESTCSTRING) $(TESTCCHARP)
+
+test: compiletestobjects $(TESTCSTACK) $(TESTCHEAP) $(TESTCERROR) $(TESTCSTRING) $(TESTCCHARP) $(TESTCBASE_CONV)
 	@echo Tests compiled!
 
 
@@ -221,13 +226,12 @@ test: compiletestobjects $(TESTCSTACK) $(TESTCHEAP) $(TESTCERROR) $(TESTCSTRING)
 
 .PHONY: clean
 clean:
-	$(RM) $(OUTPUTMAIN)
-	$(RM) $(TESTOUTPUTCMAIN)
 	$(RM) $(TESTOUTPUTCSTACK)
 	$(RM) $(TESTOUTPUTCHEAP)
 	$(RM) $(TESTOUTPUTCERROR)
 	$(RM) $(TESTOUTPUTCSTRING)
 	$(RM) $(TESTOUTPUTCCHARP)
+	$(RM) $(TESTOUTPUTCBASE_CONV)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(TESTOBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))

@@ -25,7 +25,7 @@ typedef struct {
 interpreter_state interpreter_create_state();
 // int interpreter_interpret_cst_node(parser_cst_node node, interpreter_state* state, error* err);
 int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* err);
-void interpreter_print_state(cpu_6502* cpu);
+void interpreter_print_state(cpu_6502* cpu, error* err);
 
 
 #endif

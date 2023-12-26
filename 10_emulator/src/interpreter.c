@@ -94,11 +94,11 @@ int interpreter_interpret_cst_node(parser_cst_node node, cpu_6502* cpu, error* e
 
     cpu->ip++;
 
-    interpreter_print_state(cpu);
+    interpreter_print_state(cpu, err);
 
     return RET_SUCCESS;
 }
 
-void interpreter_print_state(cpu_6502* cpu) {
-    cpu_6502_print_state(cpu);
+void interpreter_print_state(cpu_6502* cpu, error* err) {
+    cpu_6502_print_state(cpu, err);
 }

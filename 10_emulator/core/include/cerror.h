@@ -1,5 +1,5 @@
-#ifndef DERROR_H
-#define DERROR_H
+#ifndef CERROR_H
+#define CERROR_H
 
 #include <stdio.h>
 #include <stdlib.h>

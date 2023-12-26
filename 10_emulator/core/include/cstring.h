@@ -1,5 +1,5 @@
-#ifndef DSTRING_H
-#define DSTRING_H
+#ifndef CSTRING_H
+#define CSTRING_H
 
 
 #include <stdio.h>

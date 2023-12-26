@@ -2,19 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "interpreter.h"
-#include "parser.h"
-#include "ccharp.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "cpu_6502.h"
 #include "cpu.h"
+#include "cbase_conv.h"
+#include "ccharp.h"
+#include "cheap.h"
+#include "interpreter.h"
 #include "lexer.h"
 #include "parser.h"
-#include "cheap.h"
+
 
 
 cpu_6502 cpu_6502_create() {
@@ -49,63 +45,6 @@ int cpu_6502_reset(cpu_6502* cpu) {
     return RET_SUCCESS;
 }
 
-/*
-void print_binary(unsigned char byte) {
-    for (int i = 7; i >= 0; --i) {
-        printf("%d", (byte >> i) & 1);
-    }
-    printf("\n");
-}
-*/
-
-
-char* get_binary(unsigned char byte) {
-    // Allocate memory for the binary string representation
-    char* binary = (char*)malloc(9 * sizeof(char));  // 8 bits + null terminator
-
-    if (binary == NULL) {
-        return NULL; // Memory allocation failed
-    }
-
-    binary[8] = '\0'; // Set null terminator
-
-    for (int i = 7; i >= 0; --i) {
-        binary[7 - i] = ((byte >> i) & 1) ? '1' : '0';
-    }
-
-    return binary;
-}
-
-void set_bit(unsigned char *ch, int position, int bit) {
-    if (position < 0 || position > 7) {
-        printf("Invalid position. Position should be between 0 and 7.\n");
-        return;
-    }
-
-    if (bit != 0 && bit != 1) {
-        printf("Invalid bit value. Bit should be either 0 or 1.\n");
-        return;
-    }
-
-    unsigned char mask = 1 << position; // Create a mask for the bit position
-    if (bit == 1) {
-        *ch |= mask; // Set the bit at the given position to 1
-    } else {
-        *ch &= ~mask; // Set the bit at the given position to 0
-    }
-}
-
-
-int get_bit(unsigned char ch, int position) {
-    if (position < 0 || position > 7) {
-        printf("Invalid position. Position should be between 0 and 7.\n");
-        return -1;
-    }
-
-    unsigned char mask = 1 << position; // Create a mask for the bit position
-    int bit_value = (ch & mask) ? 1 : 0;
-    return bit_value;
-}
 
 
 // Function to access memory at a specific address
@@ -157,8 +96,8 @@ unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address) {
     return &(mem->data[address]);
 }
 
-void cpu_6502_print_state(cpu_6502* cpu) {
-    char* ps_binary = get_binary(cpu->ps);
+void cpu_6502_print_state(cpu_6502* cpu, error* err) {
+    char* ps_binary = cbase_conv_get_binary_from_charp(cpu->ps, err);
     printf("\n Registers |    IP |    SP |   A |   X |   Y | PS: NO-BDIZC       |\n");
     printf("           | %5d | %5d | %3d | %3d | %3d |     %8s (%3d) | \n", cpu->ip, cpu->sp, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
     printf(" MEM       |   .................................................  |\n");
@@ -169,90 +108,89 @@ void cpu_6502_print_state(cpu_6502* cpu) {
 
 
 
-void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit) {
+void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit, error* err) {
+    char *err_msg;
+    char err_flag[2];
 
     switch (flag) {
         case 'C': // carry flag
-            set_bit(&cpu->ps, 0, bit);
+            cbase_conv_set_bit(&cpu->ps, 0, bit, err);
             return;
 
         case 'Z':  // zero flag
-            set_bit(&cpu->ps, 1, bit);
+            cbase_conv_set_bit(&cpu->ps, 1, bit, err);
             return;
 
         case 'I': // interrupt disable flag
-            set_bit(&cpu->ps, 2, bit);
+            cbase_conv_set_bit(&cpu->ps, 2, bit, err);
             return;
         
         case 'D': // decimal mode flag
-            set_bit(&cpu->ps, 3, bit);
+            cbase_conv_set_bit(&cpu->ps, 3, bit, err);
             return;
 
         case 'B': // break command flag
-            set_bit(&cpu->ps, 4, bit);
+            cbase_conv_set_bit(&cpu->ps, 4, bit, err);
             return;
 
         case 'V': // overflow flag
-            set_bit(&cpu->ps, 6, bit);
+            cbase_conv_set_bit(&cpu->ps, 6, bit, err);
             return;
 
         case 'N': // negative flag
-            set_bit(&cpu->ps, 7, bit);
+            cbase_conv_set_bit(&cpu->ps, 7, bit, err);
             return;
 
         default:
-            // TODO 
-            // use error err
-            printf("Unknown flag\n");
-/*
-            char *err_msg = "";
+            
+            
+            err_flag[0] = flag;
+            err_flag[1] = '\0';
             char *str1 = "unknown status flag";
-            if (RET_ERR == error_create_message(&err_msg, str1, flag, err) ) {
+            if (RET_ERR == error_create_message(&err_msg, str1, err_flag, err) ) {
                 *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
             }
-            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
-            */
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Flag must be one of this: [CZIDBVN].");
             return;
     }
 }
 
 
-int cpu_6502_get_status_flag(cpu_6502* cpu, char flag) {
+int cpu_6502_get_status_flag(cpu_6502* cpu, char flag, error* err) {
+    char *err_msg = "";
+    char err_flag[2];
 
     switch (flag) {
         case 'C': // carry flag
-            return get_bit(cpu->ps, 0);
+            return cbase_conv_get_bit(cpu->ps, 0, err);
 
         case 'Z':  // zero flag
-            return get_bit(cpu->ps, 1);
+            return cbase_conv_get_bit(cpu->ps, 1, err);
 
         case 'I': // interrupt disable flag
-            return get_bit(cpu->ps, 2);
+            return cbase_conv_get_bit(cpu->ps, 2, err);
         
         case 'D': // decimal mode flag
-            return get_bit(cpu->ps, 3);
+            return cbase_conv_get_bit(cpu->ps, 3, err);
 
         case 'B': // break command flag
-            return get_bit(cpu->ps, 4);
+            return cbase_conv_get_bit(cpu->ps, 4, err);
 
         case 'V': // overflow flag
-            return get_bit(cpu->ps, 6);
+            return cbase_conv_get_bit(cpu->ps, 6, err);
 
         case 'N': // negative flag
-            return get_bit(cpu->ps, 7);
+            return cbase_conv_get_bit(cpu->ps, 7, err);
 
         default:
-            // TODO 
-            // use error err
-            printf("Unknown flag\n");
-/*
-            char *err_msg = "";
+            
+            err_flag[0] = flag;
+            err_flag[1] = '\0';
             char *str1 = "unknown status flag";
-            if (RET_ERR == error_create_message(&err_msg, str1, flag, err) ) {
+            if (RET_ERR == error_create_message(&err_msg, str1, err_flag, err) ) {
                 *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
             }
-            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
-            */
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Flag must be one of this: [CZIDBVN].");
             return 0;
     }
 }
@@ -281,8 +219,8 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_a = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
-    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }
@@ -298,8 +236,8 @@ int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_x = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
-    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }
@@ -315,8 +253,8 @@ int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, erro
     }
     cpu->reg_y = number;
 
-    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1);
-    if (1 == get_bit(cpu->reg_a, 7) ) cpu_6502_set_status_flag(cpu, 'N', 1);
+    if (0 == cpu->reg_a) cpu_6502_set_status_flag(cpu, 'Z', 1, err);
+    if (1 == cbase_conv_get_bit(cpu->reg_a, 7, err) ) cpu_6502_set_status_flag(cpu, 'N', 1, err);
 
     return RET_SUCCESS;
 }

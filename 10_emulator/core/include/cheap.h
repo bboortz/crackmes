@@ -1,5 +1,5 @@
-#ifndef HEAP_H
-#define HEAP_H
+#ifndef CHEAP_H
+#define CHEAP_H
 
 
 #include <stdio.h>

@@ -17,8 +17,8 @@ void tearDown() {
     // Free resources after each test
 }
 
-void test_heap_alloc_string_simple_pos(void) {
-    printf("\n*** test_heap_alloc_string_simple_pos ***\n");
+void test_string_create_simple_pos(void) {
+    printf("\n*** test_string_create_simple_pos ***\n");
 
     error err;
     //size_t str_len = 2;
@@ -30,12 +30,12 @@ void test_heap_alloc_string_simple_pos(void) {
     TEST_ASSERT_EQUAL_INT(0, (NULL == str.str));
     TEST_ASSERT_EQUAL_STRING(src, str.str);
 
-    str.mem.size = 2;
+    //str.mem.size = 2;
     int ret = string_free(str, &err);
-    TEST_ASSERT_EQUAL_INT(RET_ERR, ret);
+    TEST_ASSERT_EQUAL_INT(RET_SUCCESS, ret);
 
-    str.mem.size = 1;
-    heap_free_type(str.mem, &err);
+    //str.mem.size = 1;
+    //heap_free_type(str.mem, &err);
 }
 
 
@@ -89,8 +89,8 @@ void test_heap_realloc_simple_neg(void) {
 int main(void) {
     UNITY_BEGIN();
 
-    printf("\n\n****** test heap ****************************\n");
-    RUN_TEST( test_heap_alloc_string_simple_pos);
+    printf("\n\n****** test cstring ****************************\n");
+    RUN_TEST( test_string_create_simple_pos);
     //RUN_TEST( test_heap_free_simple_neg );
     // RUN_TEST( test_heap_realloc_simple_pos );
     //RUN_TEST( test_heap_realloc_simple_neg );
