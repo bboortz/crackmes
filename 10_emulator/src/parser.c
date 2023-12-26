@@ -229,7 +229,7 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
         return token;
     } 
     
-    // Check for Strnig
+    // Check for literal
     if (TOKEN_LITERAL == input.type ) {
         if (0 == token.pos) {
             token.type = CST_INSTRUCTION;
@@ -248,10 +248,26 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
             strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
             token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
         }
-    } else if (TOKEN_NUMBER == input.type ) {
+    
+    // Check for deicmal number
+    } else if (TOKEN_NUMBER_DEC == input.type ) {
         token.type = CST_NUMBER;
-           strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
+        strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
         token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+    // Check for hex number
+    } else if (TOKEN_NUMBER_HEX == input.type ) {
+        char* new_value = "";
+        if (RET_ERR == ccharp_hex_string_to_int_charp(&new_value, input.value, err) ) {
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+        }
+
+        token.type = CST_NUMBER;
+        strncpy(token.value, new_value, sizeof(new_value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+        heap_free(new_value, err);
+
     }
 
     return token;

@@ -19,7 +19,8 @@ const char* lexer_map_token_type_to_string(lexer_token_type t) {
         "NEWLINE",
         "COMMA(,)",
         "LITERAL",
-        "NUMBER",
+        "NUMBER_DEC",
+        "NUMBER_HEX",
     };
 
     if (t >= 0 && t < TOKEN_NUM_TYPES) {

@@ -18,8 +18,9 @@ typedef enum {
     TOKEN_NEWLINE,
     TOKEN_COMMA,
     TOKEN_LITERAL,
-    TOKEN_NUMBER,
-    TOKEN_NUM_TYPES
+    TOKEN_NUMBER_DEC,
+    TOKEN_NUMBER_HEX,
+    TOKEN_NUM_TYPES,
 } lexer_token_type;
 
 // lexer token struct

@@ -167,11 +167,50 @@ int ccharp_trim_string_from_newline(char *str) {
 }
 
 
-int ccharp_string_to_int(int* dst, const char *str) {
-    return (int) ccharp_string_to_long(dst, str);
+
+int ccharp_dec_string_to_int_charp(char** dst, const char *src, error* err) {
+    size_t num_len = CCHARP_MAX_NUMBER_LEN;
+    int num = 0;
+    ccharp_dec_string_to_int(&num, src);
+
+    *dst = heap_calloc(num_len, sizeof(char), err); // Allocate memory for the string
+
+    if (dst == NULL) {
+        return 0;
+    }
+
+    snprintf(*dst, num_len, "%d", num); // Convert the integer to a string
+
+    return RET_SUCCESS;
 }
 
-long ccharp_string_to_long(int* dst, const char* str) {
+
+int ccharp_hex_string_to_int_charp(char** dst, const char *src, error* err) {
+    size_t num_len = CCHARP_MAX_NUMBER_LEN;
+    int num = 0;
+    ccharp_hex_string_to_int(&num, src);
+
+    *dst = heap_calloc(num_len, sizeof(char), err); // Allocate memory for the string
+
+    if (dst == NULL) {
+        return 0;
+    }
+
+    snprintf(*dst, num_len, "%d", num); // Convert the integer to a string
+
+    return RET_SUCCESS;
+}
+
+
+int ccharp_dec_string_to_int(int* dst, const char *str) {
+    return (int) ccharp_dec_string_to_long(dst, str);
+}
+
+int ccharp_hex_string_to_int(int* dst, const char *str) {
+    return (int) ccharp_hex_string_to_long(dst, str);
+}
+
+long ccharp_dec_string_to_long(int* dst, const char* str) {
     char* endptr = NULL;
     errno = 0; // Reset errno before the call
     long converted = strtol(str, &endptr, 10); // Convert string to long
@@ -185,6 +224,28 @@ long ccharp_string_to_long(int* dst, const char* str) {
     // Check for non-numeric characters in the string
     if (endptr == str || *endptr != '\0') {
         return RET_ERR; // Non-numeric characters present
+    }
+
+    *dst = converted; // Store the result in the output parameter
+    return RET_SUCCESS;
+}
+
+long ccharp_hex_string_to_long(int* dst, const char* str) {
+    char* endptr = NULL;
+    errno = 0; // Reset errno before the call
+    long converted = strtol(str, &endptr, 16); // Convert string to long using base 16 (hexadecimal)
+
+    // Check for conversion errors
+    if ((errno == ERANGE && (converted == LONG_MAX || converted == LONG_MIN)) ||
+        (errno != 0 && converted == 0)) {
+        return RET_ERR; // Conversion error: out of range or invalid
+    }
+
+    // Check for non-hexadecimal characters in the string
+    for (const char* ptr = str; *ptr != '\0'; ++ptr) {
+        if (!isxdigit(*ptr)) {
+            return RET_ERR; // Non-hexadecimal characters present
+        }
     }
 
     *dst = converted; // Store the result in the output parameter

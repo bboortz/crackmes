@@ -32,8 +32,8 @@ int interpreter_interpret_instruction_mov(parser_cst_node node, interpreter_stat
 
     int number = 0;
     printf("-> %s\n", node.children[1].value);
-    // if (RET_ERR == ccharp_string_to_int(&number, "3") ) {
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[1].value) ) {
+    // if (RET_ERR == ccharp_dec_string_to_int(&number, "3") ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[1].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     state->reg_a = number; // atoi(node.children[2].value);

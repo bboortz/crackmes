@@ -243,7 +243,7 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_a = number;
@@ -260,7 +260,7 @@ int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, erro
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_x = number;
@@ -277,7 +277,7 @@ int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, erro
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_y = number;
@@ -338,7 +338,7 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
     token.line = l;
     token.pos = p;
 
-    //printf("# %d - %ld - <%s>\n", p, length, input);
+    // printf("# %d - %ld - <%s>\n", p, length, input);
 
     // Check for newline
     if ('\n' == input[p] ) {
@@ -395,18 +395,26 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
-        token.type = TOKEN_NUMBER;
+        token.type = TOKEN_NUMBER_DEC;
         *err = error_create_default();
 
+    // Check for numerical operands - starting with #
     } else if ('#' == input[p] ) {
-        printf("## %d\n", *pos);
+        printf("#n %d\n", *pos);
 
         heap_free(token.value, err);
         p++;   // skipping the character #
+
+        // check for hex number - starting with $
+        if ('$' == input[p] ) {
+            p++;   // skipping the character $
+            token.type = TOKEN_NUMBER_HEX;
+        } else {
+            token.type = TOKEN_NUMBER_DEC;
+        }
+
         input += p;
-        
         p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
-        token.type = TOKEN_NUMBER;
         *err = error_create_default();
 
     // unknown
@@ -448,7 +456,7 @@ int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, erro
 
     int number = 0;
     //printf("-> %s\n", node.children[1].value);
-    if (RET_ERR == ccharp_string_to_int(&number, node.children[1].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[1].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     cpu->reg_a = number; // atoi(node.children[2].value);
