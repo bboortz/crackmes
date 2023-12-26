@@ -122,6 +122,28 @@ int ccharp_copy_substring_as_long_as_digit(char** dst, char* src, error* err) {
 }
 
 
+int ccharp_copy_substring_until_whitespace(char** dst, char* src, error* err) {
+    
+    size_t src_len = strlen(src); // +1 for the null-terminator
+    printf("src_len: %ld\n", src_len);
+    size_t dst_len = 0;
+    char* src_begin = src;
+
+    if (0 == src_len) {
+        return RET_SUCCESS;
+    }
+
+    while (dst_len < src_len && ! isspace(*src)) {
+    // while (! isspace(*src) || '\0' != *src) {
+        dst_len++;
+        src++;
+    }
+    printf("dst_len: %ld\n", dst_len);
+
+    return ccharp_copy_substring(dst, src_begin, 0, dst_len, err);
+}
+
+
 
 void ccharp_toupper_string(char *str) {
     while (*str) {
@@ -258,58 +280,3 @@ int ccharp_substr(char *dst, char *src, size_t n) {
   return len;
 }
 
-
-/*
-void print_tack(char *file, int line) {
-    unsigned long long* rsp; // Pointer to the stack (for x86_64)
-
-    // Get the current stack pointer (for x86_64)
-    __asm__("mov %%rsp, %0" : "=r" (rsp));
-
-    printf("\n------------------------\nPrinting stack (%s, %d):\n", file, line);
-
-    // Traverse and print the stack contents
-    for (int i = 0; i < 10; ++i) {
-        long long unsigned int* addr = rsp + i;
-        printf("Stack address [%p]: Value [%lld]\n", (void *)addr, *(rsp + i));
-    }
-    printf("\n------------------------\n");
-
-}
-*/
-
-
-    /*
-
-static int malloc_count = 0;
-static int malloc_size = 0;
-static void *malloc_last_addr = 0;
-void *ccharp_malloc(size_t size, error* err) {
-    void* ret = NULL;
-    if (size <= 0) {
-        *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot allocate 0 or negative memory", "unclear, probably a programming mistake or unsifficient memory.");
-        if (RET_ERR == error_check(*err) ) {
-            return ret;
-        }
-    }
-
-    ret = (char*)malloc(size);
-
-    if (NULL == ret) {
-        *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot allocate memory", "unclear, probably a programming mistake or unsifficient memory.");
-        if (RET_ERR == error_check(*err) ) {
-            return ret;
-        }
-    }
-
-    malloc_count++;
-    malloc_size += size;
-    malloc_last_addr = (void *)ret;
-    printf("%s --> malloc - count: %d - size: %d bytes (%d kB) - last_addr: %p\n", ccharp_get_caller(), malloc_count, malloc_size, (malloc_size/1024), ret);
-
-    return ret;
-}
-
-
-
-*/

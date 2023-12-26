@@ -400,17 +400,38 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
 
     // Check for numerical operands - starting with #
     } else if ('#' == input[p] ) {
-        printf("#n %d\n", *pos);
-
+        int inc = 0; //how many position have been increased
         heap_free(token.value, err);
         p++;   // skipping the character #
+        inc++;
 
         // check for hex number - starting with $
         if ('$' == input[p] ) {
             p++;   // skipping the character $
+            inc++;
             token.type = TOKEN_NUMBER_HEX;
         } else {
             token.type = TOKEN_NUMBER_DEC;
+        }
+
+        // not a number --> error
+        if (! isdigit(input[p])) {
+            input += p - inc;
+            p += ccharp_copy_substring_until_whitespace(&token.value, input, err);
+            token.type = TOKEN_UNKNOWN;
+            
+            char *err_msg;
+            char *str1 = "unknown token";
+            if (RET_ERR == error_create_message(&err_msg, str1, token.value, err) ) {
+                *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+            }
+            *err = error_create(ERR_LEXER, ERR_CRIT_WARN, err_msg, "token unknown. please verify your input.");
+            heap_free(err_msg, err);
+
+            *pos = p - inc;
+            *line = l;
+
+            return token;
         }
 
         input += p;
@@ -424,6 +445,8 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         heap_free(token.value, err);
         input += p;
         p += ccharp_copy_substring(&token.value, input, 0, 1, err);
+        
+
         token.type = TOKEN_UNKNOWN;
         //printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
         

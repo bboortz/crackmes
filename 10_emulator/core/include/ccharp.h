@@ -15,6 +15,7 @@ int ccharp_copy_string(char** dst, char* str, error* err);
 int ccharp_copy_substring(char** dst, char* src, size_t pos, size_t n, error* err);
 int ccharp_copy_substring_as_long_as_char(char** dst, char* src, error* err);
 int ccharp_copy_substring_as_long_as_digit(char** dst, char* src, error* err);
+int ccharp_copy_substring_until_whitespace(char** dst, char* src, error* err);
 int ccharp_concat_strings(char** dst, char* str1, char* str2, error* err);
 void ccharp_toupper_string(char *str);
 

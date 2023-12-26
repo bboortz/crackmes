@@ -509,6 +509,100 @@ void test_cpu_current_lexer_next_token_oneline_neg4(void) {
     }
 }
 
+
+void test_cpu_current_lexer_next_token_oneline_neg5(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_neg5 ***\n");
+    
+    char input[] = "MOV #a";
+    int line = 0;
+    int pos = 0;
+
+    int test_pos[] = {0, 4, 6 };
+    int test_line[] = {0, 0, 0};
+    int test_type[] = {TOKEN_LITERAL, TOKEN_UNKNOWN, TOKEN_END_OF_INPUT  };
+    char *test_value[] = {"MOV", "#a", ""};
+    error_type test_error_types[] = {ERR_SUCCESS, ERR_LEXER, ERR_SUCCESS};
+    error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_WARN, ERR_CRIT_INFO};
+    char *test_error_messages[] = { "", "unknown token: \"#a\"", "" };
+    char *test_error_causes[] = { "", "token unknown. please verify your input.", "" };
+    int test = 0;
+
+    error err;
+    lexer_token token;
+
+    do {
+        printf("test: %d\n", test);
+        error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
+        lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
+        
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+        verify_token(exp_token, exp_err, token, err);
+
+        if (TOKEN_END_OF_INPUT == token.type) {
+            error_destroy(&exp_err);
+            error_destroy(&err);
+            lexer_destroy_token(&exp_token, &err);
+            lexer_destroy_token(&token, &err);
+            break;
+        } else {
+            error_destroy(&exp_err);
+            error_destroy(&err);
+            lexer_destroy_token(&exp_token, &err);
+            lexer_destroy_token(&token, &err);
+        }
+
+        test++;
+    } while (TOKEN_END_OF_INPUT != token.type);
+}
+
+
+void test_cpu_current_lexer_next_token_oneline_neg6(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_oneline_neg6 ***\n");
+    
+    char input[] = "MOV #$z";
+    int line = 0;
+    int pos = 0;
+
+    int test_pos[] = {0, 4, 7 };
+    int test_line[] = {0, 0, 0};
+    int test_type[] = {TOKEN_LITERAL, TOKEN_UNKNOWN, TOKEN_END_OF_INPUT  };
+    char *test_value[] = {"MOV", "#$z", ""};
+    error_type test_error_types[] = {ERR_SUCCESS, ERR_LEXER, ERR_SUCCESS};
+    error_criticality test_error_crits[] = {ERR_CRIT_INFO, ERR_CRIT_WARN, ERR_CRIT_INFO};
+    char *test_error_messages[] = { "", "unknown token: \"#$z\"", "" };
+    char *test_error_causes[] = { "", "token unknown. please verify your input.", "" };
+    int test = 0;
+
+    error err;
+    lexer_token token;
+
+    do {
+        printf("test: %d\n", test);
+        error exp_err = error_create(test_error_types[test], test_error_crits[test], test_error_messages[test], test_error_causes[test]);
+        lexer_token exp_token = lexer_create_token_values(test_line[test], test_pos[test], test_type[test], test_value[test], &err);
+        
+        token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+        verify_token(exp_token, exp_err, token, err);
+
+        if (TOKEN_END_OF_INPUT == token.type) {
+            error_destroy(&exp_err);
+            error_destroy(&err);
+            lexer_destroy_token(&exp_token, &err);
+            lexer_destroy_token(&token, &err);
+            break;
+        } else {
+            error_destroy(&exp_err);
+            error_destroy(&err);
+            lexer_destroy_token(&exp_token, &err);
+            lexer_destroy_token(&token, &err);
+        }
+
+        test++;
+    } while (TOKEN_END_OF_INPUT != token.type);
+}
+
+
+
 void test_cpu_current_lexer_next_token_multiline_pos(void) {
     printf("\n*** test_lex_next_token_multiline_pos ***\n");
     char input[] = "MOV a, 42\nMOV b, 5";
@@ -881,6 +975,9 @@ int main(void) {
     UNITY_BEGIN(); 
 
     printf("\n\n****** test lexer ****************************\n");
+
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg5 );
+    RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg6 );
 
     RUN_TEST( test_cpu_current_lexer_next_token_number_dec_pos );
     RUN_TEST( test_cpu_current_lexer_next_token_number_dec_pos2 );
