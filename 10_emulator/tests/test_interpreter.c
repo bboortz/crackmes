@@ -59,10 +59,10 @@ void verify_cst_node(parser_cst_node exp_token, error exp_err, parser_cst_node t
 }
 
 
-void test_interpreter_interpret_cst_node_simple_pos(void) {
-    printf("\n*** test_interpreter_interpret_cst_node_simple_pos ***\n");
+void test_interpreter_interpret_cst_node_lda_number_dec_pos(void) {
+    printf("\n*** test_interpreter_interpret_cst_node_lda_number_dec_pos ***\n");
 
-    char input[] = "MOV a, 42";
+    char input[] = "LDA #42";
 
     error err = error_create_default();
     lexer_token* lexer_token_arr = lexer_process_string(input, &err);
@@ -71,6 +71,7 @@ void test_interpreter_interpret_cst_node_simple_pos(void) {
 
     int i = 0;
     while (MAX_CST_NODES > i) {
+        printf("%d\n", i);
         // error exp_err = error_create(test_error_types[i], test_error_crits[i], test_error_messages[i], test_error_causes[i]);
 
         int result = interpreter_interpret_cst_node(cst_node_arr[i], &cpu, &err);
@@ -79,32 +80,53 @@ void test_interpreter_interpret_cst_node_simple_pos(void) {
         if (CST_END_OF_INPUT == cst_node_arr[i].type) {
             break;
         }
-
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(65534, cpu.ip);
-    // TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, cpu.err.code);
+    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(1, i);
-
-
-    
-/*
-    
-
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
-    TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);
-    */
 }
 
+
+void test_interpreter_interpret_cst_node_lda_number_hex_pos(void) {
+    printf("\n*** test_interpreter_interpret_cst_node_lda_number_dec_pos ***\n");
+
+    char input[] = "LDA #$f0";
+
+    error err = error_create_default();
+    lexer_token* lexer_token_arr = lexer_process_string(input, &err);
+    parser_cst_node *cst_node_arr = parser_process(lexer_token_arr, MAX_CST_NODES, &err);
+    cpu_6502 cpu = cpu_6502_create();
+
+    int i = 0;
+    while (MAX_CST_NODES > i) {
+        printf("%d\n", i);
+        // error exp_err = error_create(test_error_types[i], test_error_crits[i], test_error_messages[i], test_error_causes[i]);
+
+        int result = interpreter_interpret_cst_node(cst_node_arr[i], &cpu, &err);
+        TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);    
+        
+        if (CST_END_OF_INPUT == cst_node_arr[i].type) {
+            break;
+        }
+        i++;
+    }
+
+    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(240, cpu.reg_a);
+    TEST_ASSERT_EQUAL_INT(1, i);
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
+}
 
 
 int main(void) {
     UNITY_BEGIN(); 
 
-    printf("\n\n****** test parser ****************************\n");
-    RUN_TEST( test_interpreter_interpret_cst_node_simple_pos );
+    printf("\n\n****** test interpreter ****************************\n");
+    RUN_TEST( test_interpreter_interpret_cst_node_lda_number_dec_pos );
+    RUN_TEST( test_interpreter_interpret_cst_node_lda_number_hex_pos );
 
     return (UnityEnd());
 }

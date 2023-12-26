@@ -21,9 +21,8 @@ void tearDown() {
 
 
 void verify_token(lexer_token exp_token, error exp_err, lexer_token token, error err) {
-    error_print(exp_err);
+    //error_print(exp_err);
     error_print(err);
-    
     TEST_ASSERT_EQUAL_INT_MESSAGE(exp_err.code, err.code, "error code not correct!");
     TEST_ASSERT_EQUAL_INT_MESSAGE(exp_err.crit, err.crit, "error crit not correct!");
     TEST_ASSERT_EQUAL_STRING_MESSAGE(exp_err.message, err.message, "error message not correct!");
@@ -35,6 +34,50 @@ void verify_token(lexer_token exp_token, error exp_err, lexer_token token, error
     TEST_ASSERT_EQUAL_INT_MESSAGE(exp_token.pos, token.pos, "token pos not correct!");
     TEST_ASSERT_EQUAL_INT_MESSAGE(exp_token.type, token.type, "token type not correct!");
     TEST_ASSERT_EQUAL_STRING_MESSAGE(exp_token.value, token.value, "token value not correct!");
+}
+
+
+void test_cpu_current_lexer_next_token_address_pos(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_address_pos ***\n");
+
+    char input[] = "$1";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_ADDRESS, "1", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
+}
+
+
+void test_cpu_current_lexer_next_token_address_pos2(void) {
+    printf("\n*** test_cpu_current_lexer_next_token_address_pos2 ***\n");
+
+    char input[] = "$FF";
+    int line = 0;
+    int pos = 0;
+    
+    error exp_err = error_create_default();
+    error err;
+    lexer_token exp_token = lexer_create_token_values(0, 0, TOKEN_ADDRESS, "FF", &err);
+    lexer_token token;
+        
+    token = cpu_current_lexer_next_token(input, &pos, &line, &err);
+    verify_token(exp_token, exp_err, token, err);
+
+    lexer_destroy_token(&exp_token, &err);
+    lexer_destroy_token(&token, &err);
+    error_destroy(&exp_err);
+    error_destroy(&err);
 }
 
 
@@ -1019,6 +1062,8 @@ int main(void) {
 
     printf("\n\n****** test lexer ****************************\n");
 
+    RUN_TEST( test_cpu_current_lexer_next_token_address_pos );
+    RUN_TEST( test_cpu_current_lexer_next_token_address_pos2 );
 
     RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg5 );
     RUN_TEST( test_cpu_current_lexer_next_token_oneline_neg6 );

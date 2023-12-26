@@ -19,6 +19,7 @@ typedef enum {
     CST_INSTRUCTION,
     CST_REGISTER,
     CST_NUMBER,
+    CST_ADDRESS,
     CST_IGNORE,
     CST_NUM_TYPES
 } parser_cst_type;

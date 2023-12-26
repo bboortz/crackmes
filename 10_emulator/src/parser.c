@@ -19,6 +19,7 @@ const char* parser_map_cst_type_to_string(parser_cst_type t) {
         "INSTRUCTION",
         "REGISTER",
         "NUMBER",
+        "ADDRESS",
         "IGNORE"
     };
 
@@ -263,6 +264,19 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
         }
 
         token.type = CST_NUMBER;
+        strncpy(token.value, new_value, sizeof(new_value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+        heap_free(new_value, err);
+
+    // Check for address
+    } else if (TOKEN_ADDRESS == input.type ) {
+        char* new_value = "";
+        if (RET_ERR == ccharp_hex_string_to_int_charp(&new_value, input.value, err) ) {
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+        }
+
+        token.type = CST_ADDRESS;
         strncpy(token.value, new_value, sizeof(new_value) - 1); // Copy at most sizeof(destination) - 1 characters
         token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
 

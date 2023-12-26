@@ -31,7 +31,7 @@ int cpu_6502_destroy(cpu_6502* cpu) {
 
 int cpu_6502_reset(cpu_6502* cpu) {
     cpu->type = CPU_TYPE_6502;
-    cpu->ip = 0xFFFC;
+    cpu->ip = 0x600;
     cpu->sp = 0x0100;
     cpu->reg_a = 0;
     cpu->reg_x = 0;
@@ -90,6 +90,47 @@ unsigned char* cpu_6502_get_mem_stack(cpu_6502_mem* mem, uint16_t address, error
     return &(mem->data[address]);
 }
 
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_gpu(cpu_6502_mem* mem, uint16_t address, error* err) {
+    if (address < CPU_6502_MEM_GPU_MIN || address > CPU_6502_MEM_GPU_MAX) {
+        // Handle out-of-bounds memory access here
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
+
+
+// Function to access memory at a specific address
+unsigned char* cpu_6502_get_mem_code(cpu_6502_mem* mem, uint16_t address, error* err) {
+    if (address < CPU_6502_MEM_CODE_MIN || address > CPU_6502_MEM_CODE_MAX) {
+        // Handle out-of-bounds memory access here
+        char *err_msg;
+        char err_addr[2];
+        err_addr[0] = address;
+        err_addr[1] = '\0';
+        char *str1 = "Memory address out of bounds";
+        if (RET_ERR == error_create_message(&err_msg, str1, err_addr, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "Address has exceeded the memory");
+        return NULL;
+    }
+    
+    return &(mem->data[address]);
+}
+
+
 // Function to access memory at a specific address
 unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address < CPU_6502_MEM_NORMAL_MIN || address > CPU_6502_MEM_NORMAL_MAX) {
@@ -130,9 +171,9 @@ unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address, er
 
 void cpu_6502_print_state(cpu_6502* cpu, error* err) {
     char* ps_binary = cbase_conv_get_binary_from_charp(cpu->ps, err);
-    printf("\n Registers |    IP |    SP |   A |   X |   Y | PS: NO-BDIZC       |\n");
-    printf("           | %5d | %5d | %3d | %3d | %3d |     %8s (%3d) | \n", cpu->ip, cpu->sp, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
-    printf(" MEM       |   .................................................  |\n");
+    printf("\n Registers |             IP |             SP |          A |          X |          Y | PS: NO-BDIZC       |\n");
+    printf("           | 0x%04X (%5d) | 0x%04X (%5d) | 0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) |     %8s (%3d) | \n", cpu->ip, cpu->ip, cpu->sp, cpu->sp, cpu->reg_a, cpu->reg_a, cpu->reg_x, cpu->reg_x, cpu->reg_y, cpu->reg_y, ps_binary, cpu->ps);
+    printf(" MEM       | ........................................................................................... |\n");
 //    printf("\n *** CPU { ip: %5d, reg_a: %3d, reg_x: %3d, reg_y: %3d, ps: %8s (%3d) } \n", cpu->ip, cpu->reg_a, cpu->reg_x, cpu->reg_y, ps_binary, cpu->ps);
     free(ps_binary);
 }
@@ -441,6 +482,40 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         } else {
             p += ccharp_copy_substring_as_long_as_digit(&token.value, input, err);
         }
+        
+        *err = error_create_default();
+
+    // Check for address - starting with $
+    } else if ('$' == input[p] ) {
+        int inc = 0; //how many position have been increased
+        heap_free(token.value, err);
+        p++;   // skipping the character $
+        inc++;
+
+        token.type = TOKEN_ADDRESS;
+
+        // not a number --> error
+        if ( ! isxdigit(input[p]) ) {
+            input += p - inc;
+            p += ccharp_copy_substring_until_whitespace(&token.value, input, err);
+            token.type = TOKEN_UNKNOWN;
+            
+            char *err_msg;
+            char *str1 = "unknown token";
+            if (RET_ERR == error_create_message(&err_msg, str1, token.value, err) ) {
+                *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+            }
+            *err = error_create(ERR_LEXER, ERR_CRIT_WARN, err_msg, "token unknown. please verify your input.");
+            heap_free(err_msg, err);
+
+            *pos = p - inc;
+            *line = l;
+
+            return token;
+        }
+
+        input += p;
+        p += ccharp_copy_substring_as_long_as_xdigit(&token.value, input, err);
         
         *err = error_create_default();
 
