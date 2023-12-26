@@ -388,45 +388,6 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         token.type = TOKEN_LITERAL;
         *err = error_create_default();
 
-/*
-        int j = 0;
-        // TODO replace copy method!
-        //char* token_str = (char*) heap_calloc(1, sizeof(char), err);
-        //char token_str[MAX_TOKEN_VALUE];
-        //if (NULL == token_str) {
-        //    *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "Cannot allocate memory", "unclear, probably a programming mistake or unsifficient memory.");
-        //}
-        
-        
-        while (p < (int) length && isalpha(input[p])) {
-            if (j >= MAX_TOKEN_VALUE) {
-                *err = error_create(ERR_BOUNDARY, ERR_CRIT_ERROR, "too much input", "more input that internal data structure can handle.");
-                if (RET_ERR == error_check(*err) ) {
-                   break;
-                }
-            }
-            // TODO replace char to string method
-            
-            //char char_string[2]; // Reserve space for character + null terminator
-            //char_string[0] = input[p];
-            //char_string[1] = '\0';
-            //util_concat_strings(&token_str, token_str, char_string, err);
-            //j++;
-            //p++;
-            token.value[j++] = input[p++];
-            
-        }
-        token.value[j] = '\0';
-
-        // token.value = token_str;
-        //heap_free(token_str, err);
-        */
-        //p += 2;
-        // l += p;
-        //*pos = p;
-        
-        //token.type = TOKEN_STRING;
-
     // Check for numerical operands
     } else if (isdigit(input[p])) {
         //printf("## %d\n", *pos);
@@ -437,17 +398,6 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         token.type = TOKEN_NUMBER;
         *err = error_create_default();
 
-        /*
-        int j = 0;
-        // TODO replace copy method!
-        while (j < MAX_TOKEN_VALUE && p < (int) length && isdigit(input[p])) {
-            token.value[j++] = input[p++];
-        }
-        token.value[j] = '\0';
-        token.type = TOKEN_NUMBER;
-        */
-
-    // Check for numerical operands
     } else if ('#' == input[p] ) {
         printf("## %d\n", *pos);
 
@@ -459,20 +409,9 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         token.type = TOKEN_NUMBER;
         *err = error_create_default();
 
-        /*
-        int j = 0;
-        // TODO replace copy method!
-        while (j < MAX_TOKEN_VALUE && p < (int) length && isdigit(input[p])) {
-            token.value[j++] = input[p++];
-        }
-        token.value[j] = '\0';
-        token.type = TOKEN_NUMBER;
-        */
-
     // unknown
     } else {
         //printf("# %d - %ld - <%s> - <%s>\n", p, length, input, token.value);
-        
         
         heap_free(token.value, err);
         input += p;
@@ -487,13 +426,6 @@ lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* e
         }
         *err = error_create(ERR_LEXER, ERR_CRIT_WARN, err_msg, "character unknown. please verify your input.");
         heap_free(err_msg, err);
-        //heap_free(err_msg, err);
-        // util_print_error(*err);
-        /* TODO think about it, if we are returning directly here or later
-        if (RET_ERR == error_check(*err) ) {
-            return 
-        }
-        */
 
     }
 
