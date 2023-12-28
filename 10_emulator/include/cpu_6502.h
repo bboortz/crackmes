@@ -21,6 +21,9 @@
 #define CPU_6502_MEM_RESERVED_MIN 0xFFFA
 #define CPU_6502_MEM_RESERVED_MAX 0xFFFF
 
+#define CPU_6502_INSTRUCTION_POINTER_START 0x0600
+#define CPU_6502_STACK_POINTER_START 0x01FF
+
 
 // Define a struct representing the memory of CPU 6502
 typedef struct {

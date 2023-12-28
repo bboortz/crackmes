@@ -278,6 +278,38 @@ void test_interpreter_interpret_cst_node_ldy_number_hex_pos(void) {
 }
 
 
+void test_interpreter_interpret_cst_node_stack_number_hex_pos(void) {
+    printf("\n*** test_interpreter_interpret_cst_node_ldy_number_hex_pos ***\n");
+
+    char input[] = "LDX #$f0\nPHX";
+
+    error err = error_create_default();
+    lexer_token* lexer_token_arr = lexer_process_string(input, &err);
+    parser_cst_node *cst_node_arr = parser_process(lexer_token_arr, MAX_CST_NODES, &err);
+    cpu_6502 cpu = cpu_6502_create();
+
+    int i = 0;
+    while (MAX_CST_NODES > i) {
+        printf("%d\n", i);
+        // error exp_err = error_create(test_error_types[i], test_error_crits[i], test_error_messages[i], test_error_causes[i]);
+
+        int result = interpreter_interpret_cst_node(cst_node_arr[i], &cpu, &err);
+        TEST_ASSERT_EQUAL_INT(RET_SUCCESS, result);    
+        
+        if (CST_END_OF_INPUT == cst_node_arr[i].type) {
+            break;
+        }
+        i++;
+    }
+
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(240, cpu.reg_x);
+    TEST_ASSERT_EQUAL_INT(240, cpu.mem.data[511]);
+    TEST_ASSERT_EQUAL_INT(2, i);
+    TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
+}
+
+
 int main(void) {
     UNITY_BEGIN(); 
 
@@ -290,6 +322,8 @@ int main(void) {
     RUN_TEST( test_interpreter_interpret_cst_node_ldx_number_hex_pos );
     RUN_TEST( test_interpreter_interpret_cst_node_ldy_number_dec_pos );
     RUN_TEST( test_interpreter_interpret_cst_node_ldy_number_hex_pos );
+
+    RUN_TEST( test_interpreter_interpret_cst_node_stack_number_hex_pos );
 
     return (UnityEnd());
 }

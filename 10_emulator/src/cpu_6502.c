@@ -29,8 +29,8 @@ int cpu_6502_destroy(cpu_6502* cpu) {
 
 int cpu_6502_reset(cpu_6502* cpu) {
     cpu->type = CPU_TYPE_6502;
-    cpu->ip = 0x600;
-    cpu->sp = 0x0100;
+    cpu->ip = CPU_6502_INSTRUCTION_POINTER_START;
+    cpu->sp = CPU_6502_STACK_POINTER_START;
     cpu->reg_a = 0;
     cpu->reg_x = 0;
     cpu->reg_y = 0;
@@ -39,6 +39,9 @@ int cpu_6502_reset(cpu_6502* cpu) {
     for(int i = 0; i < CPU_6502_MAX_MEM; i++) {
         cpu->mem.data[i] = 0;
     }
+
+    // 
+    //cpu->mem.data[255] = 0x1ff;
 
     return RET_SUCCESS;
 }
@@ -148,6 +151,7 @@ unsigned char* cpu_6502_get_mem_normal(cpu_6502_mem* mem, uint16_t address, erro
     return cpu_6502_get_mem(mem, address);
 }
 
+
 // Function to access memory at a specific address
 unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address, error* err) {
     if (address < CPU_6502_MEM_RESERVED_MIN) {
@@ -167,17 +171,20 @@ unsigned char* cpu_6502_get_mem_reserved(cpu_6502_mem* mem, uint16_t address, er
     return cpu_6502_get_mem(mem, address);
 }
 
+
 void cpu_6502_print_state(cpu_6502* cpu, error* err) {
     char* ps_binary = cbase_conv_get_binary_from_charp(cpu->ps, err);
     printf("\n Registers |             IP |             SP |          A |          X |          Y | PS: NO-BDIZC       |\n");
     printf("           | 0x%04X (%5d) | 0x%04X (%5d) | 0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) |     %8s (%3d) |\n", cpu->ip, cpu->ip, cpu->sp, cpu->sp, cpu->reg_a, cpu->reg_a, cpu->reg_x, cpu->reg_x, cpu->reg_y, cpu->reg_y, ps_binary, cpu->ps);
     printf(" --------- | -------------- | -------------- | ---------- | ---------- | ---------- | ------------------ | ---------- |\n");
+    printf(" STACK     |         0x01F  |          0x01E |      0x01D |      0x01C |      0x01B |              0x01A |      0x010 |\n");
+    printf("           |     0x%02X (%3d) |     0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) |         0x%02X (%3d) | 0x%02X (%3d) |\n", cpu->mem.data[511], cpu->mem.data[511], cpu->mem.data[510], cpu->mem.data[510], cpu->mem.data[509], cpu->mem.data[509], cpu->mem.data[508], cpu->mem.data[508], cpu->mem.data[507], cpu->mem.data[507], cpu->mem.data[506], cpu->mem.data[506], cpu->mem.data[505], cpu->mem.data[505]);
+    printf(" --------- | -------------- | -------------- | ---------- | ---------- | ---------- | ------------------ | ---------- |\n");
     printf(" MEM       |         0x1000 |         0x1001 |     0x1002 |     0x1003 |     0x1004 |             0x1005 |     0x1006 |\n");
     printf("           |     0x%02X (%3d) |     0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) | 0x%02X (%3d) |         0x%02X (%3d) | 0x%02X (%3d) |\n", cpu->mem.data[4096], cpu->mem.data[4096], cpu->mem.data[4097], cpu->mem.data[4097], cpu->mem.data[4098], cpu->mem.data[4098], cpu->mem.data[4099], cpu->mem.data[4099], cpu->mem.data[4100], cpu->mem.data[4100], cpu->mem.data[4101], cpu->mem.data[4101], cpu->mem.data[4102], cpu->mem.data[4102]);
+
     free(ps_binary);
 }
-
-
 
 
 void cpu_6502_set_status_flag(cpu_6502* cpu, char flag, uint8_t bit, error* err) {
@@ -420,6 +427,81 @@ int cpu_6502_interpret_instruction_sty(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
+int cpu_6502_interpret_instruction_pha(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHA needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->mem.data[ cpu->sp ] = cpu->reg_a;
+    cpu->sp--;
+
+
+    return RET_SUCCESS;
+}
+
+
+int cpu_6502_interpret_instruction_phx(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHX needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->mem.data[ cpu->sp ] = cpu->reg_x;
+    cpu->sp--;
+
+    return RET_SUCCESS;
+}
+
+
+int cpu_6502_interpret_instruction_phy(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHY needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->mem.data[ cpu->sp ] = cpu->reg_y;
+    cpu->sp--;
+
+    return RET_SUCCESS;
+}
+
+
+int cpu_6502_interpret_instruction_pla(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHA needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->sp++;
+    cpu->reg_a = cpu->mem.data[ cpu->sp ];
+    cpu->mem.data[ cpu->sp ] = 0; 
+
+    return RET_SUCCESS;
+}
+
+
+int cpu_6502_interpret_instruction_plx(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHX needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->sp++;
+    cpu->reg_x = cpu->mem.data[ cpu->sp ];
+    cpu->mem.data[ cpu->sp ] = 0;
+
+    return RET_SUCCESS;
+}
+
+
+int cpu_6502_interpret_instruction_ply(parser_cst_node node, cpu_6502* cpu, error* err) {
+    if (0 != node.num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHY needs 0 parameter", "wrong number of parameters.");
+    }
+
+    cpu->sp++;
+    cpu->reg_y = cpu->mem.data[ cpu->sp ];
+    cpu->mem.data[ cpu->sp ] = 0;
+
+    return RET_SUCCESS;
+}
+
 
 int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
     //parser_print_cst_node(node);
@@ -450,6 +532,24 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
 
     } else if (strncmp(instruction, "STY", instruction_len) == 0) {
         cpu_6502_interpret_instruction_sty(node, cpu, err);
+    
+    } else if (strncmp(instruction, "PHA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_pha(node, cpu, err);
+
+    } else if (strncmp(instruction, "PHX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_phx(node, cpu, err);
+
+    } else if (strncmp(instruction, "PHY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_phy(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_pla(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_plx(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ply(node, cpu, err);
 
     } else {
         char *err_msg = "";
