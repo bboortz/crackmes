@@ -60,8 +60,8 @@ void verify_cst_node(parser_cst_node exp_token, error exp_err, parser_cst_node t
 }
 
 
-void test_parser_next_token_address_pos(void) {
-    printf("\n*** test_parser_next_token_address_pos ***\n");
+void test_cpu_current_parser_next_token_address_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_address_pos ***\n");
 
     char input[] = "$F0";
     int line = 0;
@@ -79,7 +79,7 @@ void test_parser_next_token_address_pos(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -87,8 +87,8 @@ void test_parser_next_token_address_pos(void) {
 }
 
 
-void test_parser_next_token_address_pos2(void) {
-    printf("\n*** test_parser_next_token_address_pos2 ***\n");
+void test_cpu_current_parser_next_token_address_pos2(void) {
+    printf("\n*** test_cpu_current_parser_next_token_address_pos2 ***\n");
 
     char input[] = "$0100";
     int line = 0;
@@ -106,7 +106,7 @@ void test_parser_next_token_address_pos2(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -114,8 +114,8 @@ void test_parser_next_token_address_pos2(void) {
 }
 
 
-void test_parser_next_token_number_dec_pos(void) {
-    printf("\n*** test_parser_next_token_number_dec_pos ***\n");
+void test_cpu_current_parser_next_token_number_dec_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_number_dec_pos ***\n");
 
     char input[] = "42";
     int line = 0;
@@ -133,7 +133,7 @@ void test_parser_next_token_number_dec_pos(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -141,8 +141,8 @@ void test_parser_next_token_number_dec_pos(void) {
 }
 
 
-void test_parser_next_token_number_dec_pos2(void) {
-    printf("\n*** test_parser_next_token_number_dec_pos2 ***\n");
+void test_cpu_current_parser_next_token_number_dec_pos2(void) {
+    printf("\n*** test_cpu_current_parser_next_token_number_dec_pos2 ***\n");
 
     char input[] = "#42";
     int line = 0;
@@ -160,7 +160,7 @@ void test_parser_next_token_number_dec_pos2(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -168,8 +168,8 @@ void test_parser_next_token_number_dec_pos2(void) {
 }
 
 
-void test_parser_next_token_number_hex_pos(void) {
-    printf("\n*** test_parser_next_token_number_hex_pos ***\n");
+void test_cpu_current_parser_next_token_number_hex_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_number_hex_pos ***\n");
 
     char input[] = "#$01";
     int line = 0;
@@ -186,7 +186,7 @@ void test_parser_next_token_number_hex_pos(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -194,8 +194,8 @@ void test_parser_next_token_number_hex_pos(void) {
 }
 
 
-void test_parser_next_token_number_hex_pos2(void) {
-    printf("\n*** test_parser_next_token_number_hex_pos2 ***\n");
+void test_cpu_current_parser_next_token_number_hex_pos2(void) {
+    printf("\n*** test_cpu_current_parser_next_token_number_hex_pos2 ***\n");
 
     char input[] = "#$0a";
     int line = 0;
@@ -212,7 +212,7 @@ void test_parser_next_token_number_hex_pos2(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -220,8 +220,8 @@ void test_parser_next_token_number_hex_pos2(void) {
 }
 
 
-void test_parser_next_token_number_hex_pos3(void) {
-    printf("\n*** test_parser_next_token_number_hex_pos3 ***\n");
+void test_cpu_current_parser_next_token_number_hex_pos3(void) {
+    printf("\n*** test_cpu_current_parser_next_token_number_hex_pos3 ***\n");
 
     char input[] = "#$fa";
     int line = 0;
@@ -238,7 +238,7 @@ void test_parser_next_token_number_hex_pos3(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
@@ -246,8 +246,8 @@ void test_parser_next_token_number_hex_pos3(void) {
 }
 
 
-void test_parser_next_token_simple_pos(void) {
-    printf("\n*** test_parser_next_token_simple_pos ***\n");
+void test_cpu_current_parser_next_token_simple_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_simple_pos ***\n");
 
     char input[] = "MOV a, 42";
     int line = 0;
@@ -265,15 +265,15 @@ void test_parser_next_token_simple_pos(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 
     parser_print_cst_node(ast_token);
 }
 
 
-void test_parser_next_token_simple_neg(void) {
-    printf("\n*** test_parser_next_token_simple_neg ***\n");
+void test_cpu_current_parser_next_token_simple_neg(void) {
+    printf("\n*** test_cpu_current_parser_next_token_simple_neg ***\n");
     
     char input[] = ":";
     int line = 0;
@@ -289,12 +289,12 @@ void test_parser_next_token_simple_neg(void) {
     lexer_token_arr[0] = cpu_current_lexer_next_token(input, &pos, &line, &err);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 }
 
-void test_parser_next_token_simple_neg2(void) {
-    printf("\n*** test_parser_next_token_simple_neg2 ***\n");
+void test_cpu_current_parser_next_token_simple_neg2(void) {
+    printf("\n*** test_cpu_current_parser_next_token_simple_neg2 ***\n");
 
     char input[] = ":MOV a, 42";
     //int line = 0;
@@ -314,12 +314,12 @@ void test_parser_next_token_simple_neg2(void) {
     lexer_print_token(lexer_token_arr[0]);
     verify_token(exp_token, exp_err, lexer_token_arr[0], err);
 
-    ast_token = parser_next_token(lexer_token_arr, 0, &err);
+    ast_token = cpu_current_parser_next_token(lexer_token_arr, 0, &err);
     verify_cst_node(exp_ast_token, exp_err, ast_token, err);
 }
 
-void test_parser_next_token_oneline_pos(void) {
-    printf("\n*** test_parser_next_token_oneline_pos ***\n");
+void test_cpu_current_parser_next_token_oneline_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_oneline_pos ***\n");
 
     char input[] = "MOV abc, 4200";
 
@@ -344,7 +344,7 @@ void test_parser_next_token_oneline_pos(void) {
         parser_cst_node exp_ast_token = parser_create_cst_node_values(test_line[test], test_pos[test], test_parser_cst_type[test], test_value[test], &err);
         
         verify_token(exp_token, exp_err, lexer_token_arr[test], err);
-        ast_token = parser_next_token(lexer_token_arr, test, &err);
+        ast_token = cpu_current_parser_next_token(lexer_token_arr, test, &err);
         verify_cst_node(exp_ast_token, exp_err, ast_token, err);
                 
         if (TOKEN_END_OF_INPUT == lexer_token_arr[test].type) {
@@ -357,8 +357,8 @@ void test_parser_next_token_oneline_pos(void) {
 
 
 
-void test_parser_next_token_multiline_pos(void) {
-    printf("\n*** test_parser_next_token_multiline_pos ***\n");
+void test_cpu_current_parser_next_token_multiline_pos(void) {
+    printf("\n*** test_cpu_current_parser_next_token_multiline_pos ***\n");
 
     char input[] = "MOV a, 42\nMOV b, 5";
 
@@ -384,7 +384,7 @@ void test_parser_next_token_multiline_pos(void) {
         parser_cst_node exp_ast_token = parser_create_cst_node_values(test_line[test], test_pos[test], test_parser_cst_type[test], test_value[test], &err);
         
         verify_token(exp_token, exp_err, lexer_token_arr[test], err);
-        ast_token = parser_next_token(lexer_token_arr, test, &err);
+        ast_token = cpu_current_parser_next_token(lexer_token_arr, test, &err);
         verify_cst_node(exp_ast_token, exp_err, ast_token, err);
                 
         if (TOKEN_END_OF_INPUT == lexer_token_arr[test].type) {
@@ -514,21 +514,21 @@ int main(void) {
 
     printf("\n\n****** test parser ****************************\n");
 
-    RUN_TEST( test_parser_next_token_address_pos );
-    RUN_TEST( test_parser_next_token_address_pos2 );
+    RUN_TEST( test_cpu_current_parser_next_token_address_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_address_pos2 );
 
-    RUN_TEST( test_parser_next_token_number_hex_pos );
-    RUN_TEST( test_parser_next_token_number_hex_pos2 );
-    RUN_TEST( test_parser_next_token_number_hex_pos3 );
+    RUN_TEST( test_cpu_current_parser_next_token_number_hex_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_number_hex_pos2 );
+    RUN_TEST( test_cpu_current_parser_next_token_number_hex_pos3 );
         
-    RUN_TEST( test_parser_next_token_number_dec_pos );
-    RUN_TEST( test_parser_next_token_number_dec_pos2 );
+    RUN_TEST( test_cpu_current_parser_next_token_number_dec_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_number_dec_pos2 );
         
-    RUN_TEST( test_parser_next_token_simple_pos );
-    RUN_TEST( test_parser_next_token_simple_neg );
-    RUN_TEST( test_parser_next_token_simple_neg2 );
-    RUN_TEST( test_parser_next_token_oneline_pos );
-    RUN_TEST( test_parser_next_token_multiline_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_simple_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_simple_neg );
+    RUN_TEST( test_cpu_current_parser_next_token_simple_neg2 );
+    RUN_TEST( test_cpu_current_parser_next_token_oneline_pos );
+    RUN_TEST( test_cpu_current_parser_next_token_multiline_pos );
     RUN_TEST( test_parser_process_pos );
     RUN_TEST( test_parser_process_neg );
     RUN_TEST( test_parser_process_neg2 );  

@@ -509,70 +509,6 @@ int cpu_6502_interpret_instruction_ply(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
-int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
-    //parser_print_cst_node(node);
-    //error_print(*err);
-    
-    ccharp_toupper_string(node.value);
-    char *instruction = node.value;
-    size_t instruction_len = strlen(instruction);
-
-    printf("Instruction: %s\n", instruction);
-    if (strncmp(instruction, "NOP", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_nop(node, err);
-    
-    } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_lda(node, cpu, err);
-
-    } else if (strncmp(instruction, "LDX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldx(node, cpu, err);
-
-    } else if (strncmp(instruction, "LDY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldy(node, cpu, err);
-
-    } else if (strncmp(instruction, "STA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_sta(node, cpu, err);
-
-    } else if (strncmp(instruction, "STX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_stx(node, cpu, err);
-
-    } else if (strncmp(instruction, "STY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_sty(node, cpu, err);
-    
-    } else if (strncmp(instruction, "PHA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_pha(node, cpu, err);
-
-    } else if (strncmp(instruction, "PHX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_phx(node, cpu, err);
-
-    } else if (strncmp(instruction, "PHY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_phy(node, cpu, err);
-
-    } else if (strncmp(instruction, "PLA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_pla(node, cpu, err);
-
-    } else if (strncmp(instruction, "PLX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_plx(node, cpu, err);
-
-    } else if (strncmp(instruction, "PLY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ply(node, cpu, err);
-
-    } else {
-        char *err_msg = "";
-        char *str1 = "unknown instruction";
-        if (RET_ERR == error_create_message(&err_msg, str1, instruction, err) ) {
-            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
-        }
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
-        return RET_ERR;
-    }
-
-    cpu->ip++;
-
-    return RET_SUCCESS;
-}
-
-
 
 // Get the next token from input
 lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* err) {
@@ -773,3 +709,166 @@ int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, erro
     return RET_SUCCESS;
 }
 */
+
+
+
+// Get the next token from input
+parser_cst_node cpu_6502_parser_next_token(lexer_token *input_arr, int i, error* err) {
+    lexer_token input = input_arr[i];
+    parser_cst_node token = parser_create_cst_node(err);
+    if (RET_ERR == error_check(*err) ) {
+        return token;
+    }
+    token.line = input.line;
+    token.pos = input.pos;
+    token.type = CST_UNKNOWN;
+
+    // Check for unknown
+    if (TOKEN_UNKNOWN == input.type ) {
+        token.type = CST_UNKNOWN;
+        token.value = input.value;
+        return token;
+    }
+
+    // Check for end
+    if (TOKEN_END_OF_INPUT == input.type ) {
+        token.type = CST_END_OF_INPUT;
+        return token;
+    }
+
+    // Check for newline
+    if (TOKEN_NEWLINE == input.type) {
+        token.type = CST_IGNORE;
+        token.value = input.value;
+        return token;
+    } 
+
+    // Check for Comma
+    if (TOKEN_COMMA == input.type) {
+        token.type = CST_IGNORE;
+        strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+        return token;
+    } 
+    
+    // Check for literal
+    if (TOKEN_LITERAL == input.type ) {
+        if (0 == token.pos) {
+            token.type = CST_INSTRUCTION;
+            strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
+            token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+        } else {
+            lexer_token *cst_token_current = &input_arr[i];
+            lexer_token *cst_token_before = cst_token_current - 1; 
+
+            if (TOKEN_NEWLINE == cst_token_before->type) {
+                token.type = CST_INSTRUCTION;    
+            } else {
+                token.type = CST_REGISTER;
+            }
+            strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
+            token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+        }
+    
+    // Check for deicmal number
+    } else if (TOKEN_NUMBER_DEC == input.type ) {
+        token.type = CST_NUMBER;
+        strncpy(token.value, input.value, sizeof(token.value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+    // Check for hex number
+    } else if (TOKEN_NUMBER_HEX == input.type ) {
+        char* new_value = "";
+        if (RET_ERR == ccharp_hex_string_to_int_charp(&new_value, input.value, err) ) {
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+        }
+
+        token.type = CST_NUMBER;
+        strncpy(token.value, new_value, sizeof(new_value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+        heap_free(new_value, err);
+
+    // Check for address
+    } else if (TOKEN_ADDRESS == input.type ) {
+        char* new_value = "";
+        if (RET_ERR == ccharp_hex_string_to_int_charp(&new_value, input.value, err) ) {
+            *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
+        }
+
+        token.type = CST_ADDRESS;
+        strncpy(token.value, new_value, sizeof(new_value) - 1); // Copy at most sizeof(destination) - 1 characters
+        token.value[sizeof(token.value) - 1] = '\0'; // Ensure null-termination
+
+        heap_free(new_value, err);
+
+    }
+
+    return token;
+}
+
+
+
+int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err) {
+    //parser_print_cst_node(node);
+    //error_print(*err);
+    
+    ccharp_toupper_string(node.value);
+    char *instruction = node.value;
+    size_t instruction_len = strlen(instruction);
+
+    printf("Instruction: %s\n", instruction);
+    if (strncmp(instruction, "NOP", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_nop(node, err);
+    
+    } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_lda(node, cpu, err);
+
+    } else if (strncmp(instruction, "LDX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ldx(node, cpu, err);
+
+    } else if (strncmp(instruction, "LDY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ldy(node, cpu, err);
+
+    } else if (strncmp(instruction, "STA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_sta(node, cpu, err);
+
+    } else if (strncmp(instruction, "STX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_stx(node, cpu, err);
+
+    } else if (strncmp(instruction, "STY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_sty(node, cpu, err);
+    
+    } else if (strncmp(instruction, "PHA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_pha(node, cpu, err);
+
+    } else if (strncmp(instruction, "PHX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_phx(node, cpu, err);
+
+    } else if (strncmp(instruction, "PHY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_phy(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLA", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_pla(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLX", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_plx(node, cpu, err);
+
+    } else if (strncmp(instruction, "PLY", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_ply(node, cpu, err);
+
+    } else {
+        char *err_msg = "";
+        char *str1 = "unknown instruction";
+        if (RET_ERR == error_create_message(&err_msg, str1, instruction, err) ) {
+            *err = error_create(ERR_INTERNAL, ERR_CRIT_SEVERE, "cannot cancatinate two strings", "unclear, probably a programming mistake or unsifficient memory.");
+        }
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, err_msg, "character instruction. please verify your input.");
+        return RET_ERR;
+    }
+
+    cpu->ip++;
+
+    return RET_SUCCESS;
+}

@@ -51,9 +51,9 @@ int cpu_6502_reset(cpu_6502* cpu);
 
 void cpu_6502_print_state(cpu_6502* cpu, error* err);
 
-//int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, error* err);
+lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* err);
+parser_cst_node cpu_6502_parser_next_token(lexer_token *input_arr, int i, error* err);
 int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* err);
 
-lexer_token cpu_6502_lexer_next_token(char *input, int *line, int *pos, error* err);
 
 #endif

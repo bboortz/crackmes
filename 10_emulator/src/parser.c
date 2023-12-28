@@ -7,7 +7,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "ccharp.h"
-
+#include "cpu_6502.h"
 
 
 // Function to map enum values to strings
@@ -147,7 +147,7 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
                 break;
             }
             while (found < MAX_CST_NODE_CHILDREN) {
-                parser_cst_node cst_node_child = parser_next_token(lexer_token_arr, ++i, err);
+                parser_cst_node cst_node_child = cpu_current_parser_next_token(lexer_token_arr, ++i, err);
                 if (RET_ERR == error_check(*err) ) {
                     break;
                 }
@@ -190,7 +190,7 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
     return cst_node_arr;
 }
 
-
+/*
 // Get the next token from input
 parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
     lexer_token input = input_arr[i];
@@ -286,3 +286,4 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
 
     return token;
 }
+*/

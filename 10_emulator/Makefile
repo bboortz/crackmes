@@ -208,7 +208,7 @@ $(TESTSCANNER): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) $(COREOBJECTS) src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/opcode.o src/cpu_6502.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) $(COREOBJECTS)  src/lexer.o src/cpu_6502.o src/opcode.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) $(COREOBJECTS)  src/lexer.o src/parser.o src/cpu_6502.o src/opcode.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTOPCODE): compiletestobjects
 	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTOPCODE) $(COREOBJECTS) src/opcode.o tests/test_opcode.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
