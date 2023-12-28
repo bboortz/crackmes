@@ -10,6 +10,7 @@
 #include "interpreter.h"
 #include "lexer.h"
 #include "parser.h"
+#include "opcode.h"
 
 
 
@@ -289,6 +290,8 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
 
+    
+
     int number = 0;
     if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
@@ -296,6 +299,9 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
 
     if (CST_NUMBER == node.children[0].type) {
         cpu->reg_a = number;
+        opcode_instruction inst = opcode_get_instruction(OPCODE_LDA, ADDRESSING_IMMEDIATE, err);
+        opcode_print_instruction(inst);
+
     } else if (CST_ADDRESS == node.children[0].type) {
         // TODO
         cpu->reg_a = cpu->mem.data[number];

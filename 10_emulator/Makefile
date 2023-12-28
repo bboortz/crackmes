@@ -134,14 +134,10 @@ MD	:= mkdir
 else
 MAIN	:= crackme
 TESTMAIN	:= test
-TESTSTACK   := test_stack
-TESTHEAP   := test_heap
-TESTERROR   := test_error
-TESTSTRING   := test_string
-TESTCCHARP   := test_ccharp
 TESTSCANNER   := test_scanner
 TESTLEXER   := test_lexer
 TESTPARSER  := test_parser
+TESTOPCODE  := test_opcode
 TESTCPU65202 := test_cpu_6502
 TESTINTERPRETER := test_interpreter
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
@@ -189,14 +185,10 @@ TESTOBJECTSUNITY := tests_include/unity/CMakeFiles/unity.dir/src/unity.c.o
 
 OUTPUTMAIN			:= $(call FIXPATH,$(OUTPUT)/$(MAIN))
 TESTOUTPUTMAIN		:= $(call FIXPATH,$(OUTPUT)/$(TESTMAIN))
-TESTOUTPUTSTACK		:= $(call FIXPATH,$(OUTPUT)/$(TESTSTACK))
-TESTOUTPUTHEAP		:= $(call FIXPATH,$(OUTPUT)/$(TESTHEAP))
-TESTOUTPUTERROR		:= $(call FIXPATH,$(OUTPUT)/$(TESTERROR))
-TESTOUTPUTSTRING		:= $(call FIXPATH,$(OUTPUT)/$(TESTSTRING))
-TESTOUTPUTCCHARP		:= $(call FIXPATH,$(OUTPUT)/$(TESTCCHARP))
 TESTOUTPUTSCANNER	:= $(call FIXPATH,$(OUTPUT)/$(TESTSCANNER))
 TESTOUTPUTLEXER		:= $(call FIXPATH,$(OUTPUT)/$(TESTLEXER))
 TESTOUTPUTPARSER	:= $(call FIXPATH,$(OUTPUT)/$(TESTPARSER))
+TESTOUTPUTOPCODE	:= $(call FIXPATH,$(OUTPUT)/$(TESTOPCODE))
 TESTOUTPUTCPU6502   := $(call FIXPATH,$(OUTPUT)/$(TESTCPU65202))
 TESTOUTPUTINTERPRETER := $(call FIXPATH,$(OUTPUT)/$(TESTINTERPRETER))
 
@@ -213,22 +205,25 @@ compilecoreobjects:
 	$(MAKE) -C core all
 
 $(TESTSCANNER): compiletestobjects 
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) $(COREOBJECTS) src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTSCANNER) $(COREOBJECTS) src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/opcode.o src/cpu_6502.o tests/test_scanner.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTLEXER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) $(COREOBJECTS)  src/lexer.o src/cpu_6502.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTLEXER) $(COREOBJECTS)  src/lexer.o src/cpu_6502.o src/opcode.o tests/test_lexer.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+
+$(TESTOPCODE): compiletestobjects
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTOPCODE) $(COREOBJECTS) src/opcode.o tests/test_opcode.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTPARSER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) $(COREOBJECTS) src/lexer.o src/parser.o src/cpu_6502.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTPARSER) $(COREOBJECTS) src/lexer.o src/parser.o src/opcode.o src/cpu_6502.o tests/test_parser.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTCPU65202): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCPU6502) $(COREOBJECTS) src/cpu_6502.o src/lexer.o src/parser.o tests/test_cpu_6502.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTCPU6502) $(COREOBJECTS) src/cpu_6502.o src/lexer.o src/parser.o src/opcode.o tests/test_cpu_6502.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
 $(TESTINTERPRETER): compiletestobjects
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) $(COREOBJECTS)  src/lexer.o src/parser.o src/scanner.o src/cpu_6502.o src/interpreter.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTINTERPRETER) $(COREOBJECTS)  src/lexer.o src/parser.o src/scanner.o src/cpu_6502.o src/interpreter.o src/opcode.o tests/test_interpreter.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 
-$(TESTMAIN): compiletestobjects  $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER) $(TESTCPU65202) $(TESTINTERPRETER)
-	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) $(COREOBJECTS) src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o  tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
+$(TESTMAIN): compiletestobjects  $(TESTSCANNER) $(TESTLEXER) $(TESTPARSER) $(TESTOPCODE) $(TESTCPU65202) $(TESTINTERPRETER)
+	$(CC) $(CFLAGS_TO_EXE) $(INCLUDES) $(TESTINCLUDES) -o $(TESTOUTPUTMAIN) $(COREOBJECTS) src/lexer.o src/parser.o src/scanner.o src/interpreter.o src/cpu_6502.o src/opcode.o tests/test.c $(TESTOBJECTSUNITY) $(LFLAGS) $(TESTLIBS)
 	@echo Tests compiled!
 
 $(MAIN): compileobjects
@@ -251,13 +246,9 @@ clean:
 	$(MAKE) -C core clean
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(TESTOUTPUTMAIN)
-	$(RM) $(TESTOUTPUTSTACK)
-	$(RM) $(TESTOUTPUTHEAP)
-	$(RM) $(TESTOUTPUTERROR)
-	$(RM) $(TESTOUTPUTSTRING)
-	$(RM) $(TESTOUTPUTCCHARP)
 	$(RM) $(TESTOUTPUTSCANNER)
 	$(RM) $(TESTOUTPUTLEXER)
+	$(RM) $(TESTOUTPUTOPCODE)
 	$(RM) $(TESTOUTPUTPARSER)
 	$(RM) $(TESTOUTPUTCPU6502)
 	$(RM) $(TESTOUTPUTINTERPRETER)

@@ -286,7 +286,3 @@ parser_cst_node parser_next_token(lexer_token *input_arr, int i, error* err) {
 
     return token;
 }
-
-
-
-
