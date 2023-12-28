@@ -135,7 +135,7 @@ parser_cst_node* parser_process(lexer_token *lexer_token_arr, int size, error* e
     int instructions = 0;
     while (size > i) {
         //lexer_print_token(cst_token_arr[i]);
-        cst_node = parser_next_token(lexer_token_arr, i, err);
+        cst_node = cpu_current_parser_next_token(lexer_token_arr, i, err);
         if (RET_ERR == error_check(*err) ) {
             break;
         }
