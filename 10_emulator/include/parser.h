@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "cerror.h"
 #include "lexer.h"
+#include "cpu.h"
 
 
 #define MAX_CST_NODES 100
@@ -31,6 +32,7 @@ typedef struct  cst_node{
     int line;
     int pos;
     char* value;
+    cpu_current_instruction instruction;
     struct cst_node* children;
     int num_children;
 } parser_cst_node;
@@ -45,7 +47,6 @@ void parser_print_cst_node(parser_cst_node node);
 void parser_print_cst_node_arr(parser_cst_node* cst_token_arr);
 parser_cst_node* parser_process(lexer_token* cst_token_arr, int size, error* err);
 parser_cst_node parser_next_token(lexer_token* input_arr, int i, error* err);
-// parser_cst_node get_next_token(char *input, int *pos);
 
 
 #endif

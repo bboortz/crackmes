@@ -83,7 +83,7 @@ void test_interpreter_interpret_cst_node_sda_sta_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1542, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1552, cpu.ip);
     TEST_ASSERT_EQUAL_INT(45, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_x);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_y);
@@ -116,7 +116,7 @@ void test_interpreter_interpret_cst_node_lda_number_dec_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -147,7 +147,7 @@ void test_interpreter_interpret_cst_node_lda_number_hex_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(240, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -178,7 +178,7 @@ void test_interpreter_interpret_cst_node_ldx_number_dec_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_x);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -209,7 +209,7 @@ void test_interpreter_interpret_cst_node_ldx_number_hex_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(240, cpu.reg_x);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -240,7 +240,7 @@ void test_interpreter_interpret_cst_node_ldy_number_dec_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(42, cpu.reg_y);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -271,7 +271,7 @@ void test_interpreter_interpret_cst_node_ldy_number_hex_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1537, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
     TEST_ASSERT_EQUAL_INT(240, cpu.reg_y);
     TEST_ASSERT_EQUAL_INT(1, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    
@@ -279,9 +279,9 @@ void test_interpreter_interpret_cst_node_ldy_number_hex_pos(void) {
 
 
 void test_interpreter_interpret_cst_node_stack_number_hex_pos(void) {
-    printf("\n*** test_interpreter_interpret_cst_node_ldy_number_hex_pos ***\n");
+    printf("\n*** test_interpreter_interpret_cst_node_stack_number_hex_pos ***\n");
 
-    char input[] = "LDX #$f0\nPHX";
+    char input[] = "LDA #$f0\nPHA";
 
     error err = error_create_default();
     lexer_token* lexer_token_arr = lexer_process_string(input, &err);
@@ -302,8 +302,8 @@ void test_interpreter_interpret_cst_node_stack_number_hex_pos(void) {
         i++;
     }
 
-    TEST_ASSERT_EQUAL_INT(1538, cpu.ip);
-    TEST_ASSERT_EQUAL_INT(240, cpu.reg_x);
+    TEST_ASSERT_EQUAL_INT(1539, cpu.ip);
+    TEST_ASSERT_EQUAL_INT(240, cpu.reg_a);
     TEST_ASSERT_EQUAL_INT(240, cpu.mem.data[511]);
     TEST_ASSERT_EQUAL_INT(2, i);
     TEST_ASSERT_EQUAL_INT(ERR_SUCCESS, err.code);    

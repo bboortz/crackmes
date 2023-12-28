@@ -16,6 +16,8 @@ Tier #  |
 2       | machine          | register, stack, heap
 3       | core             | error, heap, stack, string
 
+
+
 ## Upper Architecture
 Main    --> Scanner
             --> Lexer

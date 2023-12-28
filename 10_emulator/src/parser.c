@@ -7,6 +7,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "ccharp.h"
+#include "cpu.h"
 #include "cpu_6502.h"
 
 
@@ -35,6 +36,7 @@ parser_cst_node parser_create_cst_node(error* err) {
     return parser_create_cst_node_values(0, 0, CST_UNKNOWN, "", err);
 }
 
+
 parser_cst_node parser_create_cst_node_values(int line, int pos, parser_cst_type type, char* value, error* err) {
     // TODO value verification missing: is_str(...)
 
@@ -56,6 +58,8 @@ parser_cst_node parser_create_cst_node_values(int line, int pos, parser_cst_type
 
     return node;
 }
+
+
 
 int parser_add_cst_node_to_cst_node(parser_cst_node* dst, parser_cst_node child, error* err) {
     if (0 == dst->num_children ) {

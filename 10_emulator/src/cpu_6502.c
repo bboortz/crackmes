@@ -10,8 +10,81 @@
 #include "interpreter.h"
 #include "lexer.h"
 #include "parser.h"
-#include "opcode.h"
+#include "instruction.h"
 
+
+cpu_6502_instruction instructions_array[] = {
+    {CPU_6502_INSTRUCTION_NOP, CPU_6502_ADDRESSING_IMPLICIT,    0xEA, 1},
+    {CPU_6502_INSTRUCTION_LDA, CPU_6502_ADDRESSING_IMMEDIATE,   0xA9, 2},
+    {CPU_6502_INSTRUCTION_LDA, CPU_6502_ADDRESSING_ABSOLUTE,    0xAD, 3},
+    {CPU_6502_INSTRUCTION_LDX, CPU_6502_ADDRESSING_IMMEDIATE,   0xA2, 2},
+    {CPU_6502_INSTRUCTION_LDX, CPU_6502_ADDRESSING_ABSOLUTE,    0xAE, 3},
+    {CPU_6502_INSTRUCTION_LDY, CPU_6502_ADDRESSING_IMMEDIATE,   0xA0, 2},
+    {CPU_6502_INSTRUCTION_LDY, CPU_6502_ADDRESSING_ABSOLUTE,    0xAC, 3},
+    {CPU_6502_INSTRUCTION_STA, CPU_6502_ADDRESSING_ABSOLUTE,    0x8D, 3},
+    {CPU_6502_INSTRUCTION_STX, CPU_6502_ADDRESSING_ABSOLUTE,    0x8E, 3},
+    {CPU_6502_INSTRUCTION_STY, CPU_6502_ADDRESSING_ABSOLUTE,    0x8C, 3},
+    {CPU_6502_INSTRUCTION_PHA, CPU_6502_ADDRESSING_IMPLICIT,     0x48, 1},
+    {CPU_6502_INSTRUCTION_PHP, CPU_6502_ADDRESSING_IMPLICIT,     0x08, 1},
+    {CPU_6502_INSTRUCTION_PLA, CPU_6502_ADDRESSING_IMPLICIT,     0x68, 1},
+    {CPU_6502_INSTRUCTION_PLP, CPU_6502_ADDRESSING_IMPLICIT,     0x28, 1},
+};
+size_t instructions_array_len =414;
+
+
+
+// Function to map enum values to strings
+const char* cpu_6502_map_mnemonic_to_string(cpu_6502_instruction_mnemonic t) {
+    static const char* type_strings[CPU_6502_NUM_INSTRUCTION] = {
+        "UNKNOWN",
+        "NOP",
+        "LDA",
+        "LDX",
+        "LDY",
+        "STA",
+        "STX",
+        "STY",
+        "PHA",
+        "PHP",
+        "PLA",
+        "PLP",
+    };
+
+    if (t >= 0 && t < CPU_6502_NUM_INSTRUCTION) {
+        return type_strings[t];
+    }
+
+    return "Unknown"; // Return a default string for unknown enum values
+}
+
+
+// Function to map enum values to strings
+const char* cpu_6502_map_addressing_mode_to_string(cpu_6502_addressing_mode t) {
+    static const char* type_strings[CPU_6502_NUM_ADDRESSING] = {
+        "UNKNOWN",
+        "IMPLICIT"
+        "ACCUMULATOR",
+        "ADDRESSING_IMMEDIATE",
+        "ZERO_PAGE",
+        "ZERO_PAGE_X",
+        "ZERO_PAGE_Y",
+        "RELATIVE",
+        "ABSOLUTE",
+        "ABSOLUTE_X",
+        "ABSOLUTE_Y",
+        "INDIRECT",
+        "INDIRECT_ZERO_PAGE",
+        "INDEXED_INDIRECT",
+        "INDIRECT_INDEXED",
+        "ABSOLUTE_INDEXED_INDIRECT",
+    };
+
+    if (t >= 0 && t < CPU_6502_NUM_ADDRESSING) {
+        return type_strings[t];
+    }
+
+    return "Unknown"; // Return a default string for unknown enum values
+}
 
 
 cpu_6502 cpu_6502_create() {
@@ -273,37 +346,32 @@ int cpu_6502_get_status_flag(cpu_6502* cpu, char flag, error* err) {
 }
 
 
-
-
-
-int cpu_6502_interpret_instruction_nop(parser_cst_node node, error* err) {
-    if (0 != node.num_children) {
+int cpu_6502_interpret_instruction_nop(parser_cst_node* node, error* err) {
+    if (0 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 0 parameter", "wrong number of parameters.");
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_NOP, CPU_6502_ADDRESSING_IMPLICIT, err);
     }
 
     return RET_SUCCESS;
 }
 
 
-int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_lda(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
 
-    
-
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
 
-    if (CST_NUMBER == node.children[0].type) {
+    if (CST_NUMBER == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDA, CPU_6502_ADDRESSING_IMMEDIATE, err);
         cpu->reg_a = number;
-        opcode_instruction inst = opcode_get_instruction(OPCODE_LDA, ADDRESSING_IMMEDIATE, err);
-        opcode_print_instruction(inst);
 
-    } else if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    } else if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDA, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->reg_a = cpu->mem.data[number];
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -316,20 +384,21 @@ int cpu_6502_interpret_instruction_lda(parser_cst_node node, cpu_6502* cpu, erro
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_ldx(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     
-    if (CST_NUMBER == node.children[0].type) {
+    if (CST_NUMBER == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDX, CPU_6502_ADDRESSING_IMMEDIATE, err);
         cpu->reg_x = number;
-    } else if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    } else if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDX, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->reg_x = cpu->mem.data[number];
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -342,20 +411,21 @@ int cpu_6502_interpret_instruction_ldx(parser_cst_node node, cpu_6502* cpu, erro
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_ldy(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction LDA needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     
-    if (CST_NUMBER == node.children[0].type) {
+    if (CST_NUMBER == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDX, CPU_6502_ADDRESSING_IMMEDIATE, err);
         cpu->reg_y = number;
-    } else if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    } else if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_LDY, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->reg_y = cpu->mem.data[number];
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -369,18 +439,18 @@ int cpu_6502_interpret_instruction_ldy(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
-int cpu_6502_interpret_instruction_sta(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_sta(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction STA needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
 
-    if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_STA, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->mem.data[number] = cpu->reg_a;
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -390,18 +460,18 @@ int cpu_6502_interpret_instruction_sta(parser_cst_node node, cpu_6502* cpu, erro
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_stx(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_stx(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction STX needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     
-    if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_STX, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->mem.data[number] = cpu->reg_x;
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -411,18 +481,18 @@ int cpu_6502_interpret_instruction_stx(parser_cst_node node, cpu_6502* cpu, erro
     return RET_SUCCESS;
 }
 
-int cpu_6502_interpret_instruction_sty(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (1 != node.num_children) {
+int cpu_6502_interpret_instruction_sty(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (1 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction STY needs 1 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[0].value) ) {
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[0].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
     
-    if (CST_ADDRESS == node.children[0].type) {
-        // TODO
+    if (CST_ADDRESS == node->children[0].type) {
+        node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_STY, CPU_6502_ADDRESSING_ABSOLUTE, err);
         cpu->mem.data[number] = cpu->reg_y;
     } else {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "parameter must be a number or an address", "wrong parameters passed");
@@ -433,11 +503,12 @@ int cpu_6502_interpret_instruction_sty(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
-int cpu_6502_interpret_instruction_pha(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
+int cpu_6502_interpret_instruction_pha(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (0 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHA needs 0 parameter", "wrong number of parameters.");
     }
 
+    node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_PHA, CPU_6502_ADDRESSING_IMPLICIT, err);
     cpu->mem.data[ cpu->sp ] = cpu->reg_a;
     cpu->sp--;
 
@@ -446,35 +517,25 @@ int cpu_6502_interpret_instruction_pha(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
-int cpu_6502_interpret_instruction_phx(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHX needs 0 parameter", "wrong number of parameters.");
+int cpu_6502_interpret_instruction_php(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (0 != node->num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHP needs 0 parameter", "wrong number of parameters.");
     }
 
-    cpu->mem.data[ cpu->sp ] = cpu->reg_x;
+    node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_PHP, CPU_6502_ADDRESSING_IMPLICIT, err);
+    cpu->mem.data[ cpu->sp ] = cpu->ps;
     cpu->sp--;
 
     return RET_SUCCESS;
 }
 
 
-int cpu_6502_interpret_instruction_phy(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHY needs 0 parameter", "wrong number of parameters.");
-    }
-
-    cpu->mem.data[ cpu->sp ] = cpu->reg_y;
-    cpu->sp--;
-
-    return RET_SUCCESS;
-}
-
-
-int cpu_6502_interpret_instruction_pla(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
+int cpu_6502_interpret_instruction_pla(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (0 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHA needs 0 parameter", "wrong number of parameters.");
     }
 
+    node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_PHP, CPU_6502_ADDRESSING_IMPLICIT, err);
     cpu->sp++;
     cpu->reg_a = cpu->mem.data[ cpu->sp ];
     cpu->mem.data[ cpu->sp ] = 0; 
@@ -483,31 +544,18 @@ int cpu_6502_interpret_instruction_pla(parser_cst_node node, cpu_6502* cpu, erro
 }
 
 
-int cpu_6502_interpret_instruction_plx(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHX needs 0 parameter", "wrong number of parameters.");
+int cpu_6502_interpret_instruction_plp(parser_cst_node* node, cpu_6502* cpu, error* err) {
+    if (0 != node->num_children) {
+        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PLP needs 0 parameter", "wrong number of parameters.");
     }
 
+    node->instruction = instruction_get_from_instruction_type(CPU_6502_INSTRUCTION_PLP, CPU_6502_ADDRESSING_IMPLICIT, err);
     cpu->sp++;
-    cpu->reg_x = cpu->mem.data[ cpu->sp ];
+    cpu->ps = cpu->mem.data[ cpu->sp ];
     cpu->mem.data[ cpu->sp ] = 0;
 
     return RET_SUCCESS;
 }
-
-
-int cpu_6502_interpret_instruction_ply(parser_cst_node node, cpu_6502* cpu, error* err) {
-    if (0 != node.num_children) {
-        *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction PHY needs 0 parameter", "wrong number of parameters.");
-    }
-
-    cpu->sp++;
-    cpu->reg_y = cpu->mem.data[ cpu->sp ];
-    cpu->mem.data[ cpu->sp ] = 0;
-
-    return RET_SUCCESS;
-}
-
 
 
 // Get the next token from input
@@ -695,16 +743,16 @@ int cpu_6502_interpret_instruction_mov(parser_cst_node node, cpu_6502* cpu, erro
     //parser_print_cst_node(node);
     //error_print(*err);
 
-    if (2 != node.num_children) {
+    if (2 != node->num_children) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "instruction MOV needs 2 parameter", "wrong number of parameters.");
     }
 
     int number = 0;
-    //printf("-> %s\n", node.children[1].value);
-    if (RET_ERR == ccharp_dec_string_to_int(&number, node.children[1].value) ) {
+    //printf("-> %s\n", node->children[1].value);
+    if (RET_ERR == ccharp_dec_string_to_int(&number, node->children[1].value) ) {
         *err = error_create(ERR_LEXER, ERR_CRIT_ERROR, "conversion error of the number", "string is not a number");
     }
-    cpu->reg_a = number; // atoi(node.children[2].value);
+    cpu->reg_a = number; // atoi(node->children[2].value);
 
     return RET_SUCCESS;
 }
@@ -820,43 +868,37 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
 
     printf("Instruction: %s\n", instruction);
     if (strncmp(instruction, "NOP", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_nop(node, err);
+        cpu_6502_interpret_instruction_nop(&node, err);
     
     } else if (strncmp(instruction, "LDA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_lda(node, cpu, err);
+        cpu_6502_interpret_instruction_lda(&node, cpu, err);
 
     } else if (strncmp(instruction, "LDX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldx(node, cpu, err);
+        cpu_6502_interpret_instruction_ldx(&node, cpu, err);
 
     } else if (strncmp(instruction, "LDY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ldy(node, cpu, err);
+        cpu_6502_interpret_instruction_ldy(&node, cpu, err);
 
     } else if (strncmp(instruction, "STA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_sta(node, cpu, err);
+        cpu_6502_interpret_instruction_sta(&node, cpu, err);
 
     } else if (strncmp(instruction, "STX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_stx(node, cpu, err);
+        cpu_6502_interpret_instruction_stx(&node, cpu, err);
 
     } else if (strncmp(instruction, "STY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_sty(node, cpu, err);
+        cpu_6502_interpret_instruction_sty(&node, cpu, err);
     
     } else if (strncmp(instruction, "PHA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_pha(node, cpu, err);
+        cpu_6502_interpret_instruction_pha(&node, cpu, err);
 
-    } else if (strncmp(instruction, "PHX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_phx(node, cpu, err);
-
-    } else if (strncmp(instruction, "PHY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_phy(node, cpu, err);
+    } else if (strncmp(instruction, "PHP", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_php(&node, cpu, err);
 
     } else if (strncmp(instruction, "PLA", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_pla(node, cpu, err);
+        cpu_6502_interpret_instruction_pla(&node, cpu, err);
 
-    } else if (strncmp(instruction, "PLX", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_plx(node, cpu, err);
-
-    } else if (strncmp(instruction, "PLY", instruction_len) == 0) {
-        cpu_6502_interpret_instruction_ply(node, cpu, err);
+    } else if (strncmp(instruction, "PLP", instruction_len) == 0) {
+        cpu_6502_interpret_instruction_plp(&node, cpu, err);
 
     } else {
         char *err_msg = "";
@@ -868,7 +910,8 @@ int cpu_6502_interpret_instruction(parser_cst_node node, cpu_6502* cpu, error* e
         return RET_ERR;
     }
 
-    cpu->ip++;
+    instruction_print(node.instruction);
+    cpu->ip += node.instruction.length;
 
     return RET_SUCCESS;
 }

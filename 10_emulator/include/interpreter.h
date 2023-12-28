@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "parser.h"
 #include "cerror.h"
+#include "cpu.h"
 #include "cpu_6502.h"
 
 

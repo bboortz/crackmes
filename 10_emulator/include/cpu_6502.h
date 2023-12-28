@@ -25,6 +25,8 @@
 #define CPU_6502_STACK_POINTER_START 0x01FF
 
 
+
+
 // Define a struct representing the memory of CPU 6502
 typedef struct {
     unsigned char data[CPU_6502_MAX_MEM];  // Array to hold CPU memory data
@@ -43,6 +45,11 @@ typedef struct {
     cpu_6502_mem mem;
 } cpu_6502;
 
+
+
+
+const char* cpu_6502_map_mnemonic_to_string(cpu_6502_instruction_mnemonic t);
+const char* cpu_6502_map_addressing_mode_to_string(cpu_6502_addressing_mode t);
 
 // Function declarations for creating and destroying CPU 6502 instances, and resetting
 cpu_6502 cpu_6502_create();
